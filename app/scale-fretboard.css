@@ -144,3 +144,22 @@
   font-size: 10px;
 }
 
+@media (min-width: 901px) {
+  .workspace {
+    overflow: clip;
+    align-items: start;
+  }
+
+  .detail {
+    position: sticky;
+    top: 92px;
+    align-self: start;
+    width: 100%;
+    max-height: calc(100vh - 108px);
+    overflow-y: auto;
+    border-radius: 0 27px 27px 0;
+    scrollbar-width: thin;
+    scrollbar-color: #789080 transparent;
+  }
+}
+
