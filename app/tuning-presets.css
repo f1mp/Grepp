@@ -1,0 +1,40 @@
+.reference-head {
+  align-items: center;
+  gap: 14px;
+}
+
+.tuning-select {
+  max-width: 245px;
+  border: 1px solid #405149;
+  border-radius: 10px;
+  background: #21332b;
+  color: #fff;
+  padding: 10px 34px 10px 12px;
+  font: 600 11px system-ui;
+  letter-spacing: 0;
+  text-transform: none;
+  cursor: pointer;
+}
+
+.tuning-select:focus {
+  outline: 2px solid #d8ff62;
+  outline-offset: 2px;
+}
+
+.tuning-select option,
+.tuning-select optgroup {
+  background: #21332b;
+  color: #fff;
+}
+
+@media (max-width: 620px) {
+  .tuning-select {
+    width: 100%;
+    max-width: none;
+  }
+
+  .reference-strings button strong {
+    font-size: 18px;
+  }
+}
+
