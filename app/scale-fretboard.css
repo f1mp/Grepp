@@ -144,6 +144,14 @@
   font-size: 10px;
 }
 
+.card .diagram text.base-fret {
+  fill: #667169;
+}
+
+.detail .diagram text.base-fret {
+  fill: #b8c9bd;
+}
+
 @media (min-width: 901px) {
   .workspace {
     overflow: clip;
