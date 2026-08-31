@@ -134,3 +134,13 @@
   .fretboard-wrap { margin-right: -20px; }
 }
 
+.diagram .base-fret {
+  fill: #718078;
+  font: 8px Consolas, monospace;
+  text-anchor: end;
+}
+
+.diagram.large .base-fret {
+  font-size: 10px;
+}
+
