@@ -27,6 +27,37 @@
   color: #fff;
 }
 
+.repeat-tone {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  cursor: pointer;
+  color: #17251f;
+}
+
+.repeat-tone input {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: #365543;
+}
+
+.repeat-tone span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.repeat-tone b {
+  font-size: 13px;
+}
+
+.repeat-tone small {
+  color: #667169;
+  font-size: 11px;
+}
+
 @media (max-width: 620px) {
   .tuning-select {
     width: 100%;
