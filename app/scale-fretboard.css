@@ -39,6 +39,30 @@
   color: #718078;
 }
 
+.fretboard-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.scale-play {
+  border: 0;
+  border-radius: 99px;
+  padding: 11px 15px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #17251f;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 750;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.scale-play:hover { background: #365543; }
+.scale-play:disabled { cursor: wait; opacity: .65; }
+
 .fretboard-wrap {
   margin-top: 16px;
   overflow-x: auto;
@@ -131,6 +155,7 @@
 
 @media (max-width: 620px) {
   .fretboard-head { align-items: start; flex-direction: column; gap: 5px; }
+  .fretboard-actions { width: 100%; align-items: start; flex-direction: column; gap: 9px; }
   .fretboard-wrap { margin-right: -20px; }
 }
 
