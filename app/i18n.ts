@@ -47,3 +47,17 @@ const practice = {
 } as const;
 export const getPracticeCopy = (language: Language) => practice[language];
 
+const melody = {
+  sv:{title:'Melodiloop',intro:'Spela in upp till 15 sekunder och öva över din egen melodi.',record:'Spela in',stop:'Stoppa',play:'Spela loop',pause:'Pausa loop',erase:'Radera',ready:'Redo att spela in',recording:'Spelar in',saved:'Inspelningen är klar',local:'Sparas bara tillfälligt på din enhet. Hörlurar rekommenderas.'},
+  es:{title:'Bucle de melodía',intro:'Graba hasta 15 segundos y practica sobre tu propia melodía.',record:'Grabar',stop:'Detener',play:'Reproducir bucle',pause:'Pausar bucle',erase:'Borrar',ready:'Listo para grabar',recording:'Grabando',saved:'Grabación lista',local:'Solo se guarda temporalmente en tu dispositivo. Se recomiendan auriculares.'},
+  en:{title:'Melody loop',intro:'Record up to 15 seconds and practise over your own melody.',record:'Record',stop:'Stop',play:'Play loop',pause:'Pause loop',erase:'Delete',ready:'Ready to record',recording:'Recording',saved:'Recording ready',local:'Stored temporarily on your device only. Headphones are recommended.'},
+  fr:{title:'Boucle mélodique',intro:'Enregistrez jusqu’à 15 secondes et entraînez-vous sur votre propre mélodie.',record:'Enregistrer',stop:'Arrêter',play:'Lire en boucle',pause:'Mettre en pause',erase:'Supprimer',ready:'Prêt à enregistrer',recording:'Enregistrement',saved:'Enregistrement prêt',local:'Stocké temporairement sur votre appareil uniquement. Un casque est recommandé.'},
+  de:{title:'Melodie-Loop',intro:'Nimm bis zu 15 Sekunden auf und übe über deine eigene Melodie.',record:'Aufnehmen',stop:'Stoppen',play:'Loop abspielen',pause:'Loop pausieren',erase:'Löschen',ready:'Aufnahmebereit',recording:'Aufnahme läuft',saved:'Aufnahme bereit',local:'Wird nur vorübergehend auf deinem Gerät gespeichert. Kopfhörer werden empfohlen.'},
+  it:{title:'Loop melodico',intro:'Registra fino a 15 secondi ed esercitati sulla tua melodia.',record:'Registra',stop:'Ferma',play:'Riproduci loop',pause:'Pausa loop',erase:'Elimina',ready:'Pronto a registrare',recording:'Registrazione',saved:'Registrazione pronta',local:'Salvato solo temporaneamente sul dispositivo. Si consigliano le cuffie.'},
+  'zh-TW':{title:'旋律循環',intro:'錄製最多15秒，跟著自己的旋律練習。',record:'錄音',stop:'停止',play:'播放循環',pause:'暫停循環',erase:'刪除',ready:'準備錄音',recording:'錄音中',saved:'錄音完成',local:'只暫時儲存在你的裝置上，建議使用耳機。'},
+  ja:{title:'メロディーループ',intro:'最大15秒録音し、自分のメロディーに合わせて練習できます。',record:'録音',stop:'停止',play:'ループ再生',pause:'一時停止',erase:'削除',ready:'録音準備完了',recording:'録音中',saved:'録音完了',local:'端末に一時保存されるだけです。ヘッドホンを推奨します。'},
+  'zh-CN':{title:'旋律循环',intro:'录制最多15秒，跟着自己的旋律练习。',record:'录音',stop:'停止',play:'播放循环',pause:'暂停循环',erase:'删除',ready:'准备录音',recording:'录音中',saved:'录音完成',local:'只暂时保存在你的设备上，建议使用耳机。'},
+  th:{title:'ลูปทำนอง',intro:'บันทึกได้สูงสุด 15 วินาที แล้วฝึกกับทำนองของคุณเอง',record:'บันทึก',stop:'หยุด',play:'เล่นวน',pause:'พักลูป',erase:'ลบ',ready:'พร้อมบันทึก',recording:'กำลังบันทึก',saved:'บันทึกพร้อมแล้ว',local:'เก็บชั่วคราวบนอุปกรณ์ของคุณเท่านั้น แนะนำให้ใช้หูฟัง'},
+} as const;
+export const getMelodyCopy = (language: Language) => melody[language];
+
