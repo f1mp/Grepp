@@ -240,6 +240,18 @@
   border: 1px solid #6f8176;
 }
 
+.support-link {
+  color: #365543;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.support-link:hover { text-decoration: underline; }
+
+@media (max-width: 620px) {
+  .support-link { margin-top: 8px; }
+}
+
 @media (min-width: 901px) {
   .workspace {
     overflow: clip;
