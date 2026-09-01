@@ -30,3 +30,14 @@ export const getCopy = (language: Language) => translations[language];
 export const formatCopy = (value: string, values: Record<string,string|number>) =>
   Object.entries(values).reduce((text,[key,replacement])=>text.replace(`{${key}}`,String(replacement)),value);
 
+const practice = {
+  sv:{nav:'Öva',eyebrow:'Skalträning',title:'Bygg ett komp.',titleEm:'Spela över det.',intro:'Välj ackord och låt Grepp spela varje ackord i fyra slag. Loopen fortsätter tills du stoppar den.',progression:'Ackordföljd',add:'Lägg till ackord',remove:'Ta bort',tempo:'Hastighet',bpm:'slag/min',metronome:'Metronom',fourFour:'4/4 · fyra slag per ackord',start:'Starta loopen',stop:'Stoppa loopen',now:'Spelas nu',beat:'Slag'},
+  es:{nav:'Practicar',eyebrow:'Práctica de escalas',title:'Crea un acompañamiento.',titleEm:'Toca encima.',intro:'Elige acordes y Grepp tocará cada uno durante cuatro pulsos. El bucle continúa hasta que lo detengas.',progression:'Progresión',add:'Añadir acorde',remove:'Quitar',tempo:'Velocidad',bpm:'pulsos/min',metronome:'Metrónomo',fourFour:'4/4 · cuatro pulsos por acorde',start:'Iniciar bucle',stop:'Detener bucle',now:'Sonando ahora',beat:'Pulso'},
+  en:{nav:'Practice',eyebrow:'Scale practice',title:'Build a backing loop.',titleEm:'Play over it.',intro:'Choose chords and Grepp will play each one for four beats. The loop continues until you stop it.',progression:'Chord progression',add:'Add chord',remove:'Remove',tempo:'Tempo',bpm:'beats/min',metronome:'Metronome',fourFour:'4/4 · four beats per chord',start:'Start loop',stop:'Stop loop',now:'Playing now',beat:'Beat'},
+  'zh-TW':{nav:'練習',eyebrow:'音階練習',title:'建立伴奏循環。',titleEm:'跟著即興。',intro:'選擇和弦，Grepp 會讓每個和弦播放四拍，直到你停止循環。',progression:'和弦進行',add:'加入和弦',remove:'移除',tempo:'速度',bpm:'拍/分鐘',metronome:'節拍器',fourFour:'4/4 · 每個和弦四拍',start:'開始循環',stop:'停止循環',now:'目前播放',beat:'拍'},
+  ja:{nav:'練習',eyebrow:'スケール練習',title:'伴奏ループを作る。',titleEm:'上で演奏する。',intro:'コードを選ぶと、各コードを4拍ずつ再生します。停止するまでループします。',progression:'コード進行',add:'コードを追加',remove:'削除',tempo:'テンポ',bpm:'拍/分',metronome:'メトロノーム',fourFour:'4/4・1コード4拍',start:'ループ開始',stop:'ループ停止',now:'再生中',beat:'拍'},
+  'zh-CN':{nav:'练习',eyebrow:'音阶练习',title:'创建伴奏循环。',titleEm:'跟着即兴。',intro:'选择和弦，Grepp 会让每个和弦播放四拍，直到你停止循环。',progression:'和弦进行',add:'添加和弦',remove:'移除',tempo:'速度',bpm:'拍/分钟',metronome:'节拍器',fourFour:'4/4 · 每个和弦四拍',start:'开始循环',stop:'停止循环',now:'当前播放',beat:'拍'},
+  th:{nav:'ฝึก',eyebrow:'ฝึกสเกล',title:'สร้างลูปคอร์ด',titleEm:'แล้วเล่นทับ',intro:'เลือกคอร์ด แล้ว Grepp จะเล่นแต่ละคอร์ดสี่จังหวะ วนซ้ำจนกว่าคุณจะหยุด',progression:'ลำดับคอร์ด',add:'เพิ่มคอร์ด',remove:'ลบ',tempo:'ความเร็ว',bpm:'จังหวะ/นาที',metronome:'เมโทรนอม',fourFour:'4/4 · สี่จังหวะต่อคอร์ด',start:'เริ่มลูป',stop:'หยุดลูป',now:'กำลังเล่น',beat:'จังหวะ'},
+} as const;
+export const getPracticeCopy = (language: Language) => practice[language];
+
