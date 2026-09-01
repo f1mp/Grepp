@@ -285,6 +285,21 @@
 .practice-status > button { display: flex; align-items: center; gap: 8px; padding: 13px 17px; border: 0; border-radius: 99px; background: #17251f; color: white; font-weight: 750; cursor: pointer; }
 .practice-status > button.stop-practice { background: #9e3e2f; }
 .practice button:disabled, .practice select:disabled, .practice input:disabled { cursor: not-allowed; opacity: .65; }
+.melody-recorder { margin-top: 22px; padding: 20px; border-radius: 16px; background: #17251f; color: white; }
+.melody-head { display: flex; justify-content: space-between; gap: 18px; align-items: start; }
+.melody-head span { color: #d8ff62; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; }
+.melody-head p { margin: 6px 0 0; max-width: 400px; color: #b7c4bc; font-size: 11px; line-height: 1.5; }
+.melody-head strong { flex: none; padding: 6px 9px; border-radius: 99px; background: #ffffff12; color: #bdc9c1; font-size: 9px; text-transform: uppercase; letter-spacing: .08em; }
+.melody-recorder.recording .melody-head strong { background: #9e3e2f; color: white; animation: pulse 1.2s infinite; }
+.recording-time { position: relative; height: 26px; margin: 17px 0; overflow: hidden; border-radius: 7px; background: #ffffff12; }
+.recording-time i { position: absolute; inset: 0 auto 0 0; background: #d8ff62; transition: width .1s linear; }
+.recording-time span { position: relative; z-index: 1; height: 100%; display: grid; place-items: center; color: white; font: 700 10px var(--mono); mix-blend-mode: difference; }
+.melody-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.melody-actions button { display: flex; align-items: center; justify-content: center; gap: 7px; padding: 10px 13px; border: 1px solid #ffffff26; border-radius: 10px; background: #294437; color: white; font-size: 11px; font-weight: 750; cursor: pointer; }
+.melody-actions .record-button { background: #d8ff62; color: #17251f; border-color: #d8ff62; }
+.melody-recorder.recording .record-button, .melody-actions .erase-melody { background: #79372d; color: white; border-color: #a95b4f; }
+.melody-recorder > small { display: block; margin-top: 12px; color: #85968c; font-size: 9px; line-height: 1.4; }
+.melody-error { margin: 8px 0 0; color: #ffb6a7; font-size: 10px; }
 
 .header-tools { justify-self: end; display: flex; align-items: center; gap: 10px; }
 .language-picker { display: flex; align-items: center; gap: 7px; color: #59645c; font-size: 11px; font-weight: 700; }
@@ -311,6 +326,10 @@
   .practice-status { grid-template-columns: 1fr auto; }
   .practice-status > button { grid-column: 1 / -1; justify-content: center; }
   .progression-head small { display: none; }
+  .melody-head { display: grid; }
+  .melody-head strong { justify-self: start; }
+  .melody-actions { display: grid; grid-template-columns: 1fr 1fr; }
+  .melody-actions .erase-melody { grid-column: 1 / -1; }
 }
 
 @media (min-width: 901px) {
