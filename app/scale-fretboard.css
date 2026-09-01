@@ -310,6 +310,17 @@
 .melody-track.recording .record-button, .melody-actions .erase-melody { background: #79372d; color: white; border-color: #a95b4f; }
 .melody-recorder > small { display: block; margin-top: 12px; color: #85968c; font-size: 9px; line-height: 1.4; }
 .melody-error { margin: 8px 0 0; color: #ffb6a7; font-size: 10px; }
+.loop-sync { max-width: 880px; margin: -68px auto 96px; padding: 20px 24px; display: grid; grid-template-columns: 1fr minmax(190px, .8fr) auto; align-items: center; gap: 24px; border: 1px solid #b7c68a; border-radius: 18px; background: #fffdf8; box-shadow: 0 14px 35px #394c2718; }
+.loop-sync > div:first-child { display: grid; gap: 3px; }
+.loop-sync span { color: #687269; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .11em; }
+.loop-sync strong { font-size: 13px; }
+.loop-sync label { display: flex; align-items: center; gap: 10px; }
+.loop-sync input { width: 100%; accent-color: #244c3b; }
+.loop-sync label b { flex: none; font: 700 11px var(--mono); }
+.loop-sync > div:last-child { display: flex; gap: 7px; }
+.loop-sync button { padding: 9px 11px; border: 1px solid #c8cdbf; border-radius: 9px; background: #edf0e8; color: #37473e; font-size: 10px; font-weight: 750; cursor: pointer; }
+.loop-sync button:first-child { background: #244c3b; color: white; border-color: #244c3b; }
+.loop-sync button:disabled { opacity: .5; cursor: not-allowed; }
 
 .header-tools { justify-self: end; display: flex; align-items: center; gap: 10px; }
 .language-picker { display: flex; align-items: center; gap: 7px; color: #59645c; font-size: 11px; font-weight: 700; }
@@ -322,6 +333,7 @@
 
 @media (max-width: 900px) {
   .practice { margin-inline: 18px; padding: 36px; grid-template-columns: 1fr; gap: 36px; }
+  .loop-sync { margin: -68px 18px 96px; grid-template-columns: 1fr; gap: 14px; }
 }
 
 @media (max-width: 620px) {
