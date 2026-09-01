@@ -68,4 +68,12 @@ const melodyExtras = {
   'zh-CN':{track:'音轨',playAll:'全部播放',pauseAll:'全部暂停',eraseAll:'全部删除'},th:{track:'แทร็ก',playAll:'เล่นทั้งหมด',pauseAll:'พักทั้งหมด',eraseAll:'ลบทั้งหมด'},
 } as const;
 export const getMelodyExtras = (language: Language) => melodyExtras[language];
+const sync = {
+  sv:{title:'Gemensam looplängd',shortest:'Anpassa till kortaste',full:'Använd full längd',active:'Alla spår loopas vid'},es:{title:'Duración común',shortest:'Ajustar al más corto',full:'Usar duración completa',active:'Todos los bucles terminan en'},
+  en:{title:'Shared loop length',shortest:'Match shortest track',full:'Use full lengths',active:'All tracks loop at'},fr:{title:'Durée commune',shortest:'Aligner sur la plus courte',full:'Utiliser la durée complète',active:'Toutes les pistes bouclent à'},
+  de:{title:'Gemeinsame Looplänge',shortest:'An kürzeste Spur anpassen',full:'Volle Länge verwenden',active:'Alle Spuren loopen bei'},it:{title:'Durata comune',shortest:'Adatta alla traccia più corta',full:'Usa durata completa',active:'Tutte le tracce ripartono a'},
+  'zh-TW':{title:'共同循環長度',shortest:'配合最短音軌',full:'使用完整長度',active:'所有音軌循環於'},ja:{title:'共通ループ長',shortest:'最短トラックに合わせる',full:'全長を使用',active:'すべてのトラックのループ位置'},
+  'zh-CN':{title:'共同循环长度',shortest:'匹配最短音轨',full:'使用完整长度',active:'所有音轨循环于'},th:{title:'ความยาวลูปร่วม',shortest:'ปรับตามแทร็กที่สั้นที่สุด',full:'ใช้ความยาวเต็ม',active:'ทุกแทร็กวนที่'},
+} as const;
+export const getSyncCopy = (language: Language) => sync[language];
 
