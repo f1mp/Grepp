@@ -143,6 +143,20 @@
   box-shadow: 0 2px 5px #17251f22;
 }
 
+.fret-cell b.active-tone {
+  z-index: 3;
+  background: #f4ffb0;
+  color: #17251f;
+  transform: scale(1.28);
+  box-shadow: 0 0 0 5px #d8ff6266, 0 0 24px 8px #d8ff62;
+  animation: tone-flash .34s ease-out;
+}
+
+@keyframes tone-flash {
+  from { transform: scale(.88); box-shadow: 0 0 0 1px #d8ff62, 0 0 4px #d8ff62; }
+  to { transform: scale(1.28); box-shadow: 0 0 0 5px #d8ff6266, 0 0 24px 8px #d8ff62; }
+}
+
 .fret-numbers {
   min-width: 760px;
   display: grid;
