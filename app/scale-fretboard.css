@@ -247,6 +247,7 @@
 }
 
 .support-link:hover { text-decoration: underline; }
+.mobile-listen { display: none; }
 
 .header-tools { justify-self: end; display: flex; align-items: center; gap: 10px; }
 .language-picker { display: flex; align-items: center; gap: 7px; color: #59645c; font-size: 11px; font-weight: 700; }
@@ -261,6 +262,9 @@
   .support-link { margin-top: 8px; }
   .header-tools { gap: 6px; }
   .language-picker select { max-width: 96px; padding-block: 8px; }
+  .card { position: relative; }
+  .mobile-listen { position: absolute; right: 8px; bottom: 8px; width: 25px; height: 25px; display: grid; place-items: center; border-radius: 50%; background: #244c3b; color: #d8ff62; font-style: normal; }
+  .card.active .mobile-listen { background: #17251f; }
 }
 
 @media (min-width: 901px) {
