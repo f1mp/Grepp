@@ -1,108 +1,2433 @@
 'use client';
-export const dynamic='force-static';
-import {useEffect,useRef,useState} from 'react';
-import {Guitar,Mic,Music2,Plus,Search,Sparkles,Square,Trash2,Volume2} from 'lucide-react';
-import {formatCopy,getBassCopy,getCopy,getMelodyCopy,getMelodyExtras,getPracticeCopy,getSyncCopy,languages,type Language} from './i18n';
-type Chord={name:string;full:string;frets:number[];fingers:number[];notes:string[];baseFret?:number};
-type MelodyTrack={url:string|null;duration:number;playing:boolean};
-const featuredChords:Chord[]=[
-{name:'C',full:'C-dur',frets:[-1,3,2,0,1,0],fingers:[0,3,2,0,1,0],notes:['C','E','G']},{name:'G',full:'G-dur',frets:[3,2,0,0,0,3],fingers:[2,1,0,0,0,3],notes:['G','B','D']},{name:'D',full:'D-dur',frets:[-1,-1,0,2,3,2],fingers:[0,0,0,1,3,2],notes:['D','F#','A']},{name:'Am',full:'A-moll',frets:[-1,0,2,2,1,0],fingers:[0,0,2,3,1,0],notes:['A','C','E']},{name:'Em',full:'E-moll',frets:[0,2,2,0,0,0],fingers:[0,2,3,0,0,0],notes:['E','G','B']},{name:'E',full:'E-dur',frets:[0,2,2,1,0,0],fingers:[0,2,3,1,0,0],notes:['E','G#','B']},{name:'A',full:'A-dur',frets:[-1,0,2,2,2,0],fingers:[0,0,1,2,3,0],notes:['A','C#','E']},{name:'F',full:'F-dur',frets:[1,3,3,2,1,1],fingers:[1,3,4,2,1,1],notes:['F','A','C']}];
-const pitchNames=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-const templates:[string,number[]][]=pitchNames.flatMap((name,root)=>[[name,[root,(root+4)%12,(root+7)%12]],[`${name}m`,[root,(root+3)%12,(root+7)%12]]] as [string,number[]][]);
-const roots=['C','C# / Db','D','D# / Eb','E','F','F# / Gb','G','G# / Ab','A','A# / Bb','B'];
-const noteNames=['C','C#','D','Eb','E','F','F#','G','Ab','A','Bb','B'];
-const diagramQualities=[
-{symbol:'',label:'dur',ints:[0,4,7],e:[0,2,2,1,0,0],a:[-1,0,2,2,2,0],ef:[0,3,4,2,1,1],af:[0,1,2,3,4,1]},
-{symbol:'m',label:'moll',ints:[0,3,7],e:[0,2,2,0,0,0],a:[-1,0,2,2,1,0],ef:[0,3,4,1,1,1],af:[0,1,3,4,2,1]},
-{symbol:'7',label:'dominant 7',ints:[0,4,7,10],e:[0,2,0,1,0,0],a:[-1,0,2,0,2,0],ef:[0,3,1,2,1,1],af:[0,1,3,1,4,1]},
-{symbol:'maj7',label:'maj 7',ints:[0,4,7,11],e:[0,2,1,1,0,0],a:[-1,0,2,1,2,0],ef:[0,3,2,2,1,1],af:[0,1,3,2,4,1]},
-{symbol:'m7',label:'moll 7',ints:[0,3,7,10],e:[0,2,0,0,0,0],a:[-1,0,2,0,1,0],ef:[0,3,1,1,1,1],af:[0,1,3,1,2,1]},
+export const dynamic = 'force-static';
+import { useEffect, useRef, useState } from 'react';
+import {
+  Guitar,
+  Mic,
+  Music2,
+  Plus,
+  Search,
+  Sparkles,
+  Square,
+  Trash2,
+  Volume2,
+} from 'lucide-react';
+import {
+  formatCopy,
+  getBassCopy,
+  getCopy,
+  getMelodyCopy,
+  getMelodyExtras,
+  getPracticeCopy,
+  getSyncCopy,
+  languages,
+  type Language,
+} from './i18n';
+type Chord = {
+  name: string;
+  full: string;
+  frets: number[];
+  fingers: number[];
+  notes: string[];
+  baseFret?: number;
+};
+type MelodyTrack = { url: string | null; duration: number; playing: boolean };
+const featuredChords: Chord[] = [
+  {
+    name: 'C',
+    full: 'C-dur',
+    frets: [-1, 3, 2, 0, 1, 0],
+    fingers: [0, 3, 2, 0, 1, 0],
+    notes: ['C', 'E', 'G'],
+  },
+  {
+    name: 'G',
+    full: 'G-dur',
+    frets: [3, 2, 0, 0, 0, 3],
+    fingers: [2, 1, 0, 0, 0, 3],
+    notes: ['G', 'B', 'D'],
+  },
+  {
+    name: 'D',
+    full: 'D-dur',
+    frets: [-1, -1, 0, 2, 3, 2],
+    fingers: [0, 0, 0, 1, 3, 2],
+    notes: ['D', 'F#', 'A'],
+  },
+  {
+    name: 'Am',
+    full: 'A-moll',
+    frets: [-1, 0, 2, 2, 1, 0],
+    fingers: [0, 0, 2, 3, 1, 0],
+    notes: ['A', 'C', 'E'],
+  },
+  {
+    name: 'Em',
+    full: 'E-moll',
+    frets: [0, 2, 2, 0, 0, 0],
+    fingers: [0, 2, 3, 0, 0, 0],
+    notes: ['E', 'G', 'B'],
+  },
+  {
+    name: 'E',
+    full: 'E-dur',
+    frets: [0, 2, 2, 1, 0, 0],
+    fingers: [0, 2, 3, 1, 0, 0],
+    notes: ['E', 'G#', 'B'],
+  },
+  {
+    name: 'A',
+    full: 'A-dur',
+    frets: [-1, 0, 2, 2, 2, 0],
+    fingers: [0, 0, 1, 2, 3, 0],
+    notes: ['A', 'C#', 'E'],
+  },
+  {
+    name: 'F',
+    full: 'F-dur',
+    frets: [1, 3, 3, 2, 1, 1],
+    fingers: [1, 3, 4, 2, 1, 1],
+    notes: ['F', 'A', 'C'],
+  },
 ];
-const generatedChords:Chord[]=pitchNames.flatMap((root,rootIndex)=>diagramQualities.map(q=>{const eFret=(rootIndex-4+12)%12,aFret=(rootIndex-9+12)%12,useE=eFret<=aFret,fret=useE?eFret:aFret,shape=useE?q.e:q.a,fingers=useE?q.ef:q.af;return{name:`${root}${q.symbol}`,full:`${root}-${q.label}`,frets:shape.map(x=>x<0?-1:x+fret),fingers,notes:q.ints.map(i=>noteNames[(rootIndex+i)%12]),baseFret:fret>=2?fret:1}}));
-const chords:Chord[]=[...featuredChords,...generatedChords.filter(c=>!featuredChords.some(featured=>featured.name===c.name))];
-const qualities=[
-{id:'maj',label:'Dur',symbol:'',ints:[0,4,7],scales:['Jonisk (dur)','Durpentatonisk','Lydisk']},{id:'min',label:'Moll',symbol:'m',ints:[0,3,7],scales:['Eolisk (naturlig moll)','Mollpentatonisk','Dorisk']},{id:'7',label:'Dominant 7',symbol:'7',ints:[0,4,7,10],scales:['Mixolydisk','Dominant pentatonisk','Altererad (spänning)']},{id:'maj7',label:'Maj 7',symbol:'maj7',ints:[0,4,7,11],scales:['Jonisk (dur)','Lydisk','Durpentatonisk']},{id:'m7',label:'Moll 7',symbol:'m7',ints:[0,3,7,10],scales:['Dorisk','Eolisk','Mollpentatonisk']},{id:'dim',label:'Förminskat',symbol:'dim',ints:[0,3,6],scales:['Hel-halv-diminished','Lokrisk','Symmetrisk diminished']},{id:'dim7',label:'Förminskat 7',symbol:'dim7',ints:[0,3,6,9],scales:['Hel-halv-diminished','Diminished arpeggio']},{id:'aug',label:'Förstorat',symbol:'aug',ints:[0,4,8],scales:['Heltonsskala','Lydisk augmented']},{id:'sus2',label:'Sus 2',symbol:'sus2',ints:[0,2,7],scales:['Jonisk','Mixolydisk','Durpentatonisk']},{id:'sus4',label:'Sus 4',symbol:'sus4',ints:[0,5,7],scales:['Mixolydisk','Jonisk','Durpentatonisk']},{id:'6',label:'Dur 6',symbol:'6',ints:[0,4,7,9],scales:['Jonisk','Durpentatonisk','Lydisk']},{id:'m6',label:'Moll 6',symbol:'m6',ints:[0,3,7,9],scales:['Dorisk','Melodisk moll']},{id:'9',label:'Dominant 9',symbol:'9',ints:[0,4,7,10,2],scales:['Mixolydisk','Bebop dominant']},{id:'maj9',label:'Maj 9',symbol:'maj9',ints:[0,4,7,11,2],scales:['Jonisk','Lydisk']},{id:'m9',label:'Moll 9',symbol:'m9',ints:[0,3,7,10,2],scales:['Dorisk','Eolisk']},{id:'add9',label:'Add 9',symbol:'add9',ints:[0,4,7,2],scales:['Jonisk','Durpentatonisk']},{id:'11',label:'Dominant 11',symbol:'11',ints:[0,4,7,10,2,5],scales:['Mixolydisk','Bebop dominant']},{id:'13',label:'Dominant 13',symbol:'13',ints:[0,4,7,10,2,9],scales:['Mixolydisk','Bebop dominant']}];
-const scaleIntervals:Record<string,number[]>={'Jonisk (dur)':[0,2,4,5,7,9,11],Jonisk:[0,2,4,5,7,9,11],Durpentatonisk:[0,2,4,7,9],Lydisk:[0,2,4,6,7,9,11],'Eolisk (naturlig moll)':[0,2,3,5,7,8,10],Eolisk:[0,2,3,5,7,8,10],Mollpentatonisk:[0,3,5,7,10],Dorisk:[0,2,3,5,7,9,10],Mixolydisk:[0,2,4,5,7,9,10],'Dominant pentatonisk':[0,2,4,7,10],'Altererad (spänning)':[0,1,3,4,6,8,10],'Hel-halv-diminished':[0,2,3,5,6,8,9,11],Lokrisk:[0,1,3,5,6,8,10],'Symmetrisk diminished':[0,2,3,5,6,8,9,11],'Diminished arpeggio':[0,3,6,9],Heltonsskala:[0,2,4,6,8,10],'Lydisk augmented':[0,2,4,6,8,9,11],'Melodisk moll':[0,2,3,5,7,9,11],'Bebop dominant':[0,2,4,5,7,9,10,11]};
-function Diagram({c,large=false}:{c:Chord;large?:boolean}){const w=large?230:150,h=large?250:170,l=w*.18,t=h*.18,gw=w*.64,gh=h*.62,base=c.baseFret||1,displayFret=(f:number)=>base>1?f-base+1:f;return <svg viewBox={`0 0 ${w} ${h}`} className={large?'diagram large':'diagram'} role="img" aria-label={`Greppdiagram för ${c.full}`}>{base>1&&<text x={l-(large?18:14)} y={t+gh/10+4} className="base-fret">{base}</text>}{[0,1,2,3,4,5].map(i=><line key={'s'+i} x1={l+i*gw/5} y1={t} x2={l+i*gw/5} y2={t+gh} className="string"/>)}{[0,1,2,3,4,5].map(i=><line key={'f'+i} x1={l} y1={t+i*gh/5} x2={l+gw} y2={t+i*gh/5} className={i?'fret':'nut'}/>)}{c.frets.map((f,i)=>f>0&&<g key={i}><circle cx={l+i*gw/5} cy={t+(displayFret(f)-.5)*gh/5} r={large?11:8}/><text x={l+i*gw/5} y={t+(displayFret(f)-.5)*gh/5+4}>{c.fingers[i]}</text></g>)}{c.frets.map((f,i)=><text key={'o'+i} x={l+i*gw/5} y={t-12} className="mark">{f===0?'○':f<0?'×':''}</text>)}</svg>}
-function ScaleFretboard({root,scaleInts,chordInts,activePitch}:{root:number;scaleInts:number[];chordInts:number[];activePitch:number|null}){const strings=[4,11,7,2,9,4],frets=Array.from({length:13},(_,i)=>i),inScale=(pc:number)=>scaleInts.includes((pc-root+12)%12),kind=(pc:number)=>pc===root?'root':chordInts.includes((pc-root+12)%12)?'chord':'scale';return <div className="fretboard-wrap"><div className="fret-legend"><span><i className="root"/>Grundton</span><span><i className="chord"/>Ackordton</span><span><i className="scale"/>Skalton</span></div><div className="fretboard" aria-label="Greppbräda med skalans toner">{strings.map((open,stringIndex)=>frets.map(fret=>{const pc=(open+fret)%12;return <div className={`fret-cell ${fret===0?'open':''}`} key={`${stringIndex}-${fret}`}>{inScale(pc)&&<b className={`${kind(pc)} ${activePitch===pc?'active-tone':''}`}>{noteNames[pc]}</b>}</div>}))}</div><div className="fret-numbers">{frets.map(f=><span key={f}>{f===0?'Öppen':f}</span>)}</div></div>}
-type BassPattern={name:string;full:string;root:number;ints:number[]};
-const bassQualities=[{id:'maj',symbol:'',label:'dur',ints:[0,4,7]},{id:'min',symbol:'m',label:'moll',ints:[0,3,7]},{id:'7',symbol:'7',label:'dominant 7',ints:[0,4,7,10]}];
-const bassPatterns:BassPattern[]=pitchNames.flatMap((root,rootIndex)=>bassQualities.map(q=>({name:`${root}${q.symbol}`,full:`${root}-${q.label}`,root:rootIndex,ints:q.ints})));
-const bassTunings=[{id:'bass-standard',name:'4-strängad standard',hint:'E–A–D–G',midis:[28,33,38,43]},{id:'bass-drop-d',name:'4-strängad Drop D',hint:'D–A–D–G',midis:[26,33,38,43]},{id:'bass-eb',name:'Halvton ned',hint:'Eb–Ab–Db–Gb',midis:[27,32,37,42]},{id:'bass-5',name:'5-strängad standard',hint:'B–E–A–D–G',midis:[23,28,33,38,43]},{id:'bass-5-high',name:'5-strängad hög C',hint:'E–A–D–G–C',midis:[28,33,38,43,48]},{id:'bass-6',name:'6-strängad standard',hint:'B–E–A–D–G–C',midis:[23,28,33,38,43,48]}];
-function BassFretboard({root,ints,scaleInts,activePitch,onNote}:{root:number;ints:number[];scaleInts:number[];activePitch:number|null;onNote?:(midi:number)=>void}){const strings=[43,38,33,28],frets=Array.from({length:13},(_,i)=>i),inScale=(pc:number)=>scaleInts.includes((pc-root+12)%12),kind=(pc:number)=>pc===root?'root':ints.includes((pc-root+12)%12)?'chord':'scale';return <div className="bass-fret-wrap"><div className="fret-legend"><span><i className="root"/>Grundton</span><span><i className="chord"/>Ackordton</span><span><i className="scale"/>Skalton</span></div><div className="bass-fretboard">{strings.map((open,stringIndex)=>frets.map(fret=>{const midi=open+fret,pc=midi%12;return <button type="button" onClick={()=>inScale(pc)&&onNote?.(midi)} className={`bass-fret-cell ${fret===0?'open':''}`} key={`${stringIndex}-${fret}`} aria-label={inScale(pc)?midiLabel(midi):undefined}>{inScale(pc)&&<b className={`${kind(pc)} ${activePitch===pc?'active-tone':''}`}>{noteNames[pc]}</b>}</button>}))}</div><div className="fret-numbers bass-numbers">{frets.map(f=><span key={f}>{f===0?'0':f}</span>)}</div></div>}
-const pitch=(f:number)=>((Math.round(12*Math.log2(f/440))+69)%12+12)%12;
-const tuningPresets=[
-{id:'standard',group:'Vanliga',name:'Standard',hint:'Allround',midis:[40,45,50,55,59,64]},
-{id:'drop-d',group:'Vanliga',name:'Drop D',hint:'Rock & metal',midis:[38,45,50,55,59,64]},
-{id:'eb',group:'Artist & stil',name:'Halvton ned',hint:'Hendrix / klassisk rock',midis:[39,44,49,54,58,63]},
-{id:'d-standard',group:'Vanliga',name:'Helton ned',hint:'Tyngre rock',midis:[38,43,48,53,57,62]},
-{id:'drop-c',group:'Artist & stil',name:'Drop C',hint:'Modern metal',midis:[36,43,48,53,57,62]},
-{id:'open-g',group:'Öppna',name:'Open G',hint:'Blues & Stones',midis:[38,43,50,55,59,62]},
-{id:'keith-g',group:'Artist & stil',name:'Keith Richards 5-strängad',hint:'Open G utan låg E',midis:[43,50,55,59,62]},
-{id:'open-d',group:'Öppna',name:'Open D',hint:'Slide, folk & blues',midis:[38,45,50,54,57,62]},
-{id:'open-e',group:'Öppna',name:'Open E',hint:'Slide & klassisk rock',midis:[40,47,52,56,59,64]},
-{id:'dadgad',group:'Öppna',name:'DADGAD',hint:'Folk & keltiskt',midis:[38,45,50,55,57,62]},
-{id:'double-drop-d',group:'Vanliga',name:'Double Drop D',hint:'Singer-songwriter',midis:[38,45,50,55,59,62]},
-{id:'baritone-b',group:'Flersträngat',name:'Bariton B-standard',hint:'Baritongitarr',midis:[35,40,45,50,54,59]},
-{id:'7-standard',group:'Flersträngat',name:'7-strängad standard',hint:'B–E–A–D–G–B–E',midis:[35,40,45,50,55,59,64]},
-{id:'7-drop-a',group:'Flersträngat',name:'7-strängad Drop A',hint:'Modern metal',midis:[33,40,45,50,55,59,64]},
-{id:'8-standard',group:'Flersträngat',name:'8-strängad standard',hint:'F#–B–E–A–D–G–B–E',midis:[30,35,40,45,50,55,59,64]},
-{id:'8-drop-e',group:'Flersträngat',name:'8-strängad Drop E',hint:'Låg E1',midis:[28,35,40,45,50,55,59,64]},
+const pitchNames = [
+  'C',
+  'C#',
+  'D',
+  'D#',
+  'E',
+  'F',
+  'F#',
+  'G',
+  'G#',
+  'A',
+  'A#',
+  'B',
 ];
-const midiLabel=(m:number)=>pitchNames[((m%12)+12)%12]+(Math.floor(m/12)-1);
-export default function Home(){const[selected,setSelected]=useState(chords[0]),[query,setQuery]=useState(''),[theoryRoot,setTheoryRoot]=useState(0),[qualityId,setQualityId]=useState('maj'),[activeScaleIndex,setActiveScaleIndex]=useState(0),[listening,setListening]=useState(false),[soundLoading,setSoundLoading]=useState(false),[selectedString,setSelectedString]=useState(0),[tuningId,setTuningId]=useState('standard'),[repeatTone,setRepeatTone]=useState(false),[detected,setDetected]=useState('—'),[confidence,setConfidence]=useState(0),[level,setLevel]=useState(0),[error,setError]=useState(''),[language,setLanguage]=useState<Language>('sv'),[progression,setProgression]=useState(['C','Am','F','G']),[tempo,setTempo]=useState(80),[metronome,setMetronome]=useState(true),[practicing,setPracticing]=useState(false),[practiceChordIndex,setPracticeChordIndex]=useState(0),[practiceBeat,setPracticeBeat]=useState(0),[recordingTrack,setRecordingTrack]=useState<number|null>(null),[recordingTime,setRecordingTime]=useState(0),[melodyTracks,setMelodyTracks]=useState<MelodyTrack[]>(()=>Array.from({length:3},()=>({url:null,duration:0,playing:false}))),[syncLength,setSyncLength]=useState<number|null>(null),[melodyError,setMelodyError]=useState(''),[selectedBass,setSelectedBass]=useState(bassPatterns[0]),[bassQuery,setBassQuery]=useState(''),[bassScale,setBassScale]=useState('Mollpentatonisk'),[bassTuningId,setBassTuningId]=useState('bass-standard'),[bassString,setBassString]=useState(0),[bassRepeat,setBassRepeat]=useState(false),[activeBassPitch,setActiveBassPitch]=useState<number|null>(null);const audio=useRef<{ctx:AudioContext;stream:MediaStream;raf:number}|null>(null),soundCtx=useRef<AudioContext|null>(null),guitar=useRef<{play:(note:number,when?:number,options?:Record<string,unknown>)=>unknown}|null>(null),bass=useRef<{play:(note:number,when?:number,options?:Record<string,unknown>)=>unknown;stop?:()=>void}|null>(null),practiceTimer=useRef<number|null>(null),recorder=useRef<MediaRecorder|null>(null),melodyStream=useRef<MediaStream|null>(null),melodyChunks=useRef<Blob[]>([]),recordingTimer=useRef<number|null>(null),melodyAudio=useRef<(HTMLAudioElement|null)[]>([null,null,null]),melodyCutoff=useRef<number|null>(null);const quality=qualities.find(q=>q.id===qualityId)!;const chordNotes=quality.ints.map(i=>noteNames[(theoryRoot+i)%12]),shownScaleIndex=Math.min(activeScaleIndex,quality.scales.length-1),shownScale=quality.scales[shownScaleIndex],activeTuning=tuningPresets.find(t=>t.id===tuningId)!,activeBassTuning=bassTunings.find(t=>t.id===bassTuningId)!,copy=getCopy(language),bassCopy=getBassCopy(language),practiceCopy=getPracticeCopy(language),melodyCopy=getMelodyCopy(language),melodyExtras=getMelodyExtras(language),syncCopy=getSyncCopy(language),recordedDurations=melodyTracks.filter(track=>track.url).map(track=>track.duration),shortestRecording=recordedDurations.length?Math.min(...recordedDurations):0;
-useEffect(()=>{const saved=window.localStorage.getItem('grepp-language') as Language|null;if(saved&&languages.some(([code])=>code===saved))setLanguage(saved)},[]);
-const changeLanguage=(next:Language)=>{setLanguage(next);window.localStorage.setItem('grepp-language',next);document.documentElement.lang=next};
-const[activeScalePitch,setActiveScalePitch]=useState<number|null>(null),scaleTimers=useRef<number[]>([]);
-const stop=()=>{const a=audio.current;if(a){cancelAnimationFrame(a.raf);a.stream.getTracks().forEach(t=>t.stop());a.ctx.close()}audio.current=null;setListening(false);setLevel(0)};useEffect(()=>()=>{stop();if(practiceTimer.current!==null)window.clearInterval(practiceTimer.current)},[]);
-const stopSound=()=>{const instrument=guitar.current as({stop?:()=>void}|null);instrument?.stop?.();bass.current?.stop?.();scaleTimers.current.forEach(timer=>window.clearTimeout(timer));scaleTimers.current=[];if(practiceTimer.current!==null){window.clearInterval(practiceTimer.current);practiceTimer.current=null}setPracticing(false);setPracticeBeat(0);setActiveScalePitch(null);setActiveBassPitch(null)};
-const playChord=async(c:Chord)=>{stop();stopSound();setError('');setSoundLoading(true);try{if(!soundCtx.current)soundCtx.current=new AudioContext();await soundCtx.current.resume();if(!guitar.current){const mod=await import('soundfont-player');guitar.current=await mod.default.instrument(soundCtx.current,'acoustic_guitar_nylon',{soundfont:'FluidR3_GM',format:'mp3',gain:.72})}const tuningMidi=[40,45,50,55,59,64],ctx=soundCtx.current;c.frets.forEach((f,i)=>{if(f>=0)guitar.current?.play(tuningMidi[i]+f,ctx.currentTime+i*.055,{duration:2.8,gain:.82})})}catch{setError('Gitarrljudet kunde inte laddas. Kontrollera internetanslutningen och försök igen.')}finally{setSoundLoading(false)}};
-const playScale=async()=>{stop();stopSound();setError('');setSoundLoading(true);try{if(!soundCtx.current)soundCtx.current=new AudioContext();await soundCtx.current.resume();if(!guitar.current){const mod=await import('soundfont-player');guitar.current=await mod.default.instrument(soundCtx.current,'acoustic_guitar_nylon',{soundfont:'FluidR3_GM',format:'mp3',gain:.72})}const ints=scaleIntervals[shownScale]||quality.ints,up=[...ints,12],sequence=[...up,...up.slice(0,-1).reverse()],rootMidi=48+theoryRoot,ctx=soundCtx.current;sequence.forEach((interval,i)=>guitar.current?.play(rootMidi+interval,ctx.currentTime+i*.34,{duration:.75,gain:.8}));const timers=sequence.map((interval,i)=>window.setTimeout(()=>setActiveScalePitch((theoryRoot+interval)%12),i*340));timers.push(window.setTimeout(()=>setActiveScalePitch(null),sequence.length*340));scaleTimers.current=timers}catch{setError('Skalljudet kunde inte laddas. Kontrollera internetanslutningen och försök igen.')}finally{setSoundLoading(false)}};
-const playString=async(index:number)=>{stop();stopSound();setSelectedString(index);setError('');setSoundLoading(true);try{if(!soundCtx.current)soundCtx.current=new AudioContext();await soundCtx.current.resume();if(!guitar.current){const mod=await import('soundfont-player');guitar.current=await mod.default.instrument(soundCtx.current,'acoustic_guitar_nylon',{soundfont:'FluidR3_GM',format:'mp3',gain:.72})}guitar.current.play(activeTuning.midis[index],soundCtx.current.currentTime,{duration:4.5,gain:.9})}catch{setError('Referenstonen kunde inte laddas. Kontrollera internetanslutningen och försök igen.')}finally{setSoundLoading(false)}};
-const ensureBass=async()=>{if(!soundCtx.current)soundCtx.current=new AudioContext();await soundCtx.current.resume();if(!bass.current){const mod=await import('soundfont-player');bass.current=await mod.default.instrument(soundCtx.current,'electric_bass_finger',{soundfont:'FluidR3_GM',format:'mp3',gain:.82})}return soundCtx.current};
-const playBassNotes=async(midis:number[])=>{stop();stopSound();setError('');setSoundLoading(true);try{const ctx=await ensureBass();midis.forEach((midi,i)=>bass.current?.play(midi,ctx.currentTime+i*.22,{duration:1.8,gain:.9}))}catch{setError(bassCopy.soundError)}finally{setSoundLoading(false)}};
-const playBassPattern=()=>playBassNotes([...selectedBass.ints,12].map(interval=>36+selectedBass.root+interval));
-const playBassScale=async()=>{const ints=scaleIntervals[bassScale]||selectedBass.ints,sequence=[...ints,12,...ints.slice().reverse()];void playBassNotes(sequence.map(interval=>36+selectedBass.root+interval));const timers=sequence.map((interval,i)=>window.setTimeout(()=>setActiveBassPitch((selectedBass.root+interval)%12),i*220));timers.push(window.setTimeout(()=>setActiveBassPitch(null),sequence.length*220));scaleTimers.current=timers};
-const playBassString=async(index:number)=>{setBassString(index);await playBassNotes([activeBassTuning.midis[index]])};
-const startPractice=async()=>{stop();stopSound();setError('');setSoundLoading(true);try{if(!soundCtx.current)soundCtx.current=new AudioContext();await soundCtx.current.resume();if(!guitar.current){const mod=await import('soundfont-player');guitar.current=await mod.default.instrument(soundCtx.current,'acoustic_guitar_nylon',{soundfont:'FluidR3_GM',format:'mp3',gain:.72})}const ctx=soundCtx.current,tuningMidi=[40,45,50,55,59,64];let beat=0;const tick=()=>{const chordIndex=Math.floor(beat/4)%progression.length,setChord=chords.find(c=>c.name===progression[chordIndex])||chords[0];setPracticeChordIndex(chordIndex);setPracticeBeat(beat%4);if(beat%4===0)setChord.frets.forEach((f,i)=>{if(f>=0)guitar.current?.play(tuningMidi[i]+f,ctx.currentTime+i*.045,{duration:Math.max(1.2,230/tempo),gain:.76})});if(metronome){const osc=ctx.createOscillator(),gain=ctx.createGain();osc.frequency.value=beat%4===0?1120:820;gain.gain.setValueAtTime(.12,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.045);osc.connect(gain).connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+.05)}beat+=1};setPracticing(true);tick();practiceTimer.current=window.setInterval(tick,60000/tempo)}catch{setError('Kompljudet kunde inte laddas. Kontrollera internetanslutningen och försök igen.')}finally{setSoundLoading(false)}};
-const updateProgression=(index:number,name:string)=>setProgression(items=>items.map((item,i)=>i===index?name:item));
-const stopRecording=()=>{if(recorder.current?.state==='recording')recorder.current.stop()};
-const startRecording=async(index:number)=>{if(recordingTrack!==null)return;setMelodyError('');stop();try{const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});melodyStream.current=stream;const mimeType=['audio/webm;codecs=opus','audio/webm','audio/mp4'].find(type=>MediaRecorder.isTypeSupported(type)),nextRecorder=new MediaRecorder(stream,mimeType?{mimeType}:undefined),started=performance.now();recorder.current=nextRecorder;melodyChunks.current=[];nextRecorder.ondataavailable=e=>{if(e.data.size)melodyChunks.current.push(e.data)};nextRecorder.onstop=()=>{const duration=Math.min(30,(performance.now()-started)/1000),blob=new Blob(melodyChunks.current,{type:nextRecorder.mimeType||'audio/webm'}),url=URL.createObjectURL(blob);melodyAudio.current[index]?.pause();melodyAudio.current[index]=null;if(melodyCutoff.current!==null&&duration<melodyCutoff.current){melodyCutoff.current=duration;setSyncLength(duration)}setMelodyTracks(items=>items.map((item,i)=>{if(i!==index)return item;if(item.url)URL.revokeObjectURL(item.url);return{url,duration,playing:false}}));melodyStream.current?.getTracks().forEach(track=>track.stop());melodyStream.current=null;if(recordingTimer.current!==null)window.clearInterval(recordingTimer.current);recordingTimer.current=null;setRecordingTrack(null);setRecordingTime(0)};nextRecorder.start(100);setRecordingTime(0);setRecordingTrack(index);recordingTimer.current=window.setInterval(()=>{const elapsed=Math.min(30,(performance.now()-started)/1000);setRecordingTime(elapsed);if(elapsed>=30&&nextRecorder.state==='recording')nextRecorder.stop()},100)}catch{setMelodyError(copy.micOff);setRecordingTrack(null)}};
-const prepareMelodyAudio=(index:number,url:string)=>{const existing=melodyAudio.current[index];if(existing&&existing.src===url)return existing;existing?.pause();const element=new Audio(url),restart=()=>{if(melodyCutoff.current!==null&&element.dataset.wantPlay==='1'){element.currentTime=0;void element.play()}};element.loop=melodyCutoff.current===null;element.dataset.wantPlay='0';element.addEventListener('timeupdate',()=>{const cutoff=melodyCutoff.current;if(cutoff!==null&&element.currentTime>=Math.max(0,cutoff-.04))restart()});element.addEventListener('ended',restart);melodyAudio.current[index]=element;return element};
-const applySyncLength=(length:number)=>{const safe=Math.max(.5,Math.min(shortestRecording,length));melodyCutoff.current=safe;setSyncLength(safe);melodyAudio.current.forEach(element=>{if(element){element.loop=false;if(element.currentTime>=safe)element.currentTime=0}})};
-const useFullMelodyLengths=()=>{melodyCutoff.current=null;setSyncLength(null);melodyAudio.current.forEach(element=>{if(element)element.loop=true})};
-const toggleMelodyTrack=async(index:number)=>{const track=melodyTracks[index];if(!track.url)return;setMelodyError('');if(track.playing){const element=melodyAudio.current[index];if(element){element.dataset.wantPlay='0';element.pause()}setMelodyTracks(items=>items.map((item,i)=>i===index?{...item,playing:false}:item));return}const element=prepareMelodyAudio(index,track.url);element.dataset.wantPlay='1';try{await element.play();setMelodyTracks(items=>items.map((item,i)=>i===index?{...item,playing:true}:item))}catch{element.dataset.wantPlay='0';setMelodyError(copy.loadingSound)}};
-const playAllMelodies=async()=>{setMelodyError('');const playable=melodyTracks.map((track,index)=>({track,index})).filter(({track})=>track.url);for(const{track,index}of playable){const element=prepareMelodyAudio(index,track.url!);element.currentTime=0;element.dataset.wantPlay='1'}try{await Promise.all(playable.map(({index})=>melodyAudio.current[index]!.play()));setMelodyTracks(items=>items.map(item=>item.url?{...item,playing:true}:item))}catch{playable.forEach(({index})=>{if(melodyAudio.current[index])melodyAudio.current[index]!.dataset.wantPlay='0'});setMelodyError(copy.loadingSound)}};
-const pauseAllMelodies=()=>{melodyAudio.current.forEach(item=>{if(item){item.dataset.wantPlay='0';item.pause()}});setMelodyTracks(items=>items.map(item=>({...item,playing:false})))};
-const eraseMelodyTrack=(index:number)=>{melodyAudio.current[index]?.pause();melodyAudio.current[index]=null;if(melodyTracks.filter((item,i)=>i!==index&&item.url).length<2)useFullMelodyLengths();setMelodyTracks(items=>items.map((item,i)=>{if(i!==index)return item;if(item.url)URL.revokeObjectURL(item.url);return{url:null,duration:0,playing:false}}));setMelodyError('')};
-const eraseAllMelodies=()=>{pauseAllMelodies();useFullMelodyLengths();melodyTracks.forEach(item=>{if(item.url)URL.revokeObjectURL(item.url)});melodyAudio.current=[null,null,null];setMelodyTracks(Array.from({length:3},()=>({url:null,duration:0,playing:false})));setMelodyError('')};
-useEffect(()=>{if(!repeatTone)return;const timer=window.setInterval(()=>playString(selectedString),4000);return()=>window.clearInterval(timer)},[repeatTone,selectedString,tuningId]);
-useEffect(()=>{if(!bassRepeat)return;const timer=window.setInterval(()=>void playBassString(bassString),4000);return()=>window.clearInterval(timer)},[bassRepeat,bassString,bassTuningId]);
-const start=async()=>{stopSound();setError('');try{
-  const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}}),ctx=new AudioContext();await ctx.resume();
-  const an=ctx.createAnalyser();an.fftSize=16384;an.smoothingTimeConstant=.55;ctx.createMediaStreamSource(stream).connect(an);
-  const bins=new Float32Array(an.frequencyBinCount),history:number[][]=[];let stableName='',stableFrames=0;setListening(true);
-  const run=()=>{an.getFloatFrequencyData(bins);let max=-120;for(let i=8;i<bins.length;i++)if(bins[i]>max)max=bins[i];setLevel(Math.max(0,Math.min(100,(max+72)*2.2)));
-    const chroma=Array(12).fill(0),floor=Math.max(-82,max-34);
-    for(let i=8;i<bins.length-1;i++){const db=bins[i],f=i*ctx.sampleRate/an.fftSize;if(f>1500)break;if(f>=70&&db>floor&&db>bins[i-1]&&db>=bins[i+1]){const prominence=db-Math.max(bins[i-2]||-120,bins[i+2]||-120);if(prominence>.25)chroma[pitch(f)]+=Math.pow(10,(db-max)/20)*Math.max(.35,prominence)/Math.sqrt(f)}}
-    const compressed=chroma.map(v=>Math.sqrt(v)),total=compressed.reduce((a,b)=>a+b,0);
-    if(total>.01&&max>-68){const norm=compressed.map(v=>v/total);history.push(norm);if(history.length>12)history.shift();if(history.length>=6){
-      const avg=norm.map((_,i)=>history.reduce((s,row)=>s+row[i],0)/history.length),scores=templates.map(([name,notes])=>{const values=notes.map(n=>avg[n]),hit=values.reduce((s,v)=>s+v,0),coverage=values.filter(v=>v>.055).length,outside=1-hit;return{name,coverage,score:hit+Math.min(...values)*1.8+values[0]*.18-outside*.28}}).sort((a,b)=>b.score-a.score),best=scores[0];
-      if(best.coverage>=2&&best.score-scores[1].score>.012){if(stableName===best.name)stableFrames++;else{stableName=best.name;stableFrames=1}if(stableFrames>=5){setDetected(best.name);const margin=best.score-scores[1].score;setConfidence(Math.round(Math.min(96,Math.max(50,58+margin*260+best.coverage*7))))}}else stableFrames=0;
-    }}const raf=requestAnimationFrame(run);if(audio.current)audio.current.raf=raf};audio.current={ctx,stream,raf:requestAnimationFrame(run)}
-}catch{setError('Mikrofonen kunde inte startas. Kontrollera webbläsarens mikrofonbehörighet.')}};
-const selectChord=(chord:Chord)=>{setSelected(chord);if(window.matchMedia('(max-width: 900px), (hover: none)').matches)void playChord(chord)};
-return <main><header className="topbar"><a className="brand" href="#top"><i><Guitar size={22}/></i>Grepp</a><nav><a href="#ackord">{copy.navChords}</a><a href="#teori">{copy.navTheory}</a><a href="#bas">{bassCopy.nav}</a><a href="#ova">{practiceCopy.nav}</a><a href="#lyssna">{copy.navListen}</a><a href="#stamma">{copy.navTune}</a></nav><div className="header-tools"><label className="language-picker"><span>{copy.language}</span><select value={language} onChange={e=>changeLanguage(e.target.value as Language)} aria-label={copy.language}>{languages.map(([code,label])=><option value={code} key={code}>{label}</option>)}</select></label><a className="head-action" href="#lyssna"><Mic size={17}/>{copy.identify}</a></div></header>
-<section className="intro" id="top"><div><p className="eyebrow"><Sparkles size={14}/>{copy.eyebrow}</p><h1>{copy.hero}<br/><em>{copy.heroEm}</em></h1></div><p className="lead">{copy.lead}</p></section>
-<section className="workspace" id="ackord"><div className="library"><div className="section-head"><div><p className="kicker">{copy.library}</p><h2>{copy.find}</h2></div><span>{chords.length} {copy.chords}</span></div><label className="search"><Search size={18}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder={copy.search}/></label><div className="grid">{chords.filter(c=>(c.name+c.full).toLowerCase().includes(query.toLowerCase())).map(c=><button key={c.name} className={`card ${selected.name===c.name?'active':''}`} onClick={()=>selectChord(c)} aria-label={`${c.full}. ${copy.listenTo} ${c.name}`}><span><b>{c.name}</b><small>{c.full}</small></span><Diagram c={c}/><i className="mobile-listen"><Volume2 size={13}/></i></button>)}</div></div>
-<aside className="detail"><p className="kicker">{copy.selected}</p><div className="detail-head"><h2>{selected.name}</h2><span>{selected.full}</span></div><Diagram c={selected} large/><button className="play-chord" onClick={()=>playChord(selected)} disabled={soundLoading}><Volume2 size={18}/>{soundLoading?copy.loadingGuitar:`${copy.listenTo} ${selected.name}`}</button><div className="notes"><span>{copy.tones}</span>{selected.notes.map(n=><b key={n}>{n}</b>)}</div><div className="diagram-guide"><b>{copy.guide}</b><div><span><i>1–4</i>{copy.fingers}</span><span><i>○</i>{copy.open}</span><span><i>×</i>{copy.mute}</span><span><i className="fret-example">3</i>{copy.startFret}</span></div></div><p className="tip">{copy.tip}</p></aside></section>
-<section className="theory" id="teori"><div className="theory-intro"><p className="eyebrow"><Music2 size={14}/>{copy.navTheory}</p><h2>{copy.family}<br/><em>{copy.onePlace}</em></h2><p>{formatCopy(copy.theoryIntro,{n:qualities.length,total:12*qualities.length})}</p><div className="selectors"><label>{copy.root}<select value={theoryRoot} onChange={e=>setTheoryRoot(Number(e.target.value))}>{roots.map((r,i)=><option value={i} key={r}>{r}</option>)}</select></label><label>{copy.type}<select value={qualityId} onChange={e=>setQualityId(e.target.value)}>{qualities.map(q=><option value={q.id} key={q.id}>{q.label} ({q.symbol||'dur'})</option>)}</select></label></div></div>
-<div className="theory-card"><div className="chord-summary"><span>{copy.selected}</span><strong>{roots[theoryRoot].split(' ')[0]}{quality.symbol}</strong><small>{quality.label}</small></div><div className="tone-row"><span>{copy.chordTones}</span>{chordNotes.map(n=><b key={n}>{n}</b>)}</div><h3>{copy.scales}</h3><div className="scale-list">{quality.scales.map((scale,i)=>{const ints=scaleIntervals[scale]||quality.ints;return <article key={scale} className={shownScaleIndex===i?'selected-scale':''} role="button" tabIndex={0} onClick={()=>setActiveScaleIndex(i)} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();setActiveScaleIndex(i)}}}><div><span>0{i+1}</span><h4>{roots[theoryRoot].split(' ')[0]} {scale}</h4></div><p>{ints.map(x=>noteNames[(theoryRoot+x)%12]).join(' · ')}</p><small>{i===0?copy.safe:i===1?copy.color:copy.tension}</small></article>})}</div><div className="fretboard-head"><div><span>{copy.fretboard}</span><h3>{roots[theoryRoot].split(' ')[0]} {shownScale}</h3></div><div className="fretboard-actions"><small>{copy.chooseScale}</small><button className="scale-play" onClick={playScale} disabled={soundLoading}><Volume2 size={16}/>{soundLoading?copy.loadingSound:copy.listenScale}</button></div></div><ScaleFretboard root={theoryRoot} scaleInts={scaleIntervals[shownScale]||quality.ints} chordInts={quality.ints} activePitch={activeScalePitch}/><p className="theory-note">{copy.theoryNote}</p></div></section>
-<section className="bass-section" id="bas"><div className="bass-intro"><p className="eyebrow"><Music2 size={14}/>{bassCopy.eyebrow}</p><h2>{bassCopy.title}<br/><em>{bassCopy.titleEm}</em></h2><p>{bassCopy.intro}</p></div><div className="bass-workspace"><div className="bass-library"><div className="section-head"><div><p className="kicker">{bassCopy.library}</p><h3>{bassCopy.find}</h3></div><span>{bassPatterns.length} {bassCopy.patterns}</span></div><label className="search"><Search size={18}/><input value={bassQuery} onChange={e=>setBassQuery(e.target.value)} placeholder={bassCopy.search}/></label><div className="bass-pattern-grid">{bassPatterns.filter(pattern=>(pattern.name+pattern.full).toLowerCase().includes(bassQuery.toLowerCase())).map(pattern=><button key={pattern.name} className={selectedBass.name===pattern.name?'active':''} onClick={()=>setSelectedBass(pattern)}><strong>{pattern.name}</strong><small>{pattern.full}</small><span>{pattern.ints.map(interval=>noteNames[(pattern.root+interval)%12]).join(' · ')}</span></button>)}</div></div><aside className="bass-detail"><p className="kicker">{bassCopy.selected}</p><div className="bass-selected"><strong>{selectedBass.name}</strong><span>{selectedBass.full}</span></div><div className="bass-note-row"><span>{bassCopy.notes}</span>{selectedBass.ints.map(interval=><b key={interval}>{noteNames[(selectedBass.root+interval)%12]}</b>)}</div><button className="bass-play" onClick={playBassPattern} disabled={soundLoading}><Volume2 size={17}/>{bassCopy.play}</button><label>{bassCopy.scale}<select value={bassScale} onChange={e=>setBassScale(e.target.value)}><option>Mollpentatonisk</option><option>Durpentatonisk</option><option>Dorisk</option><option>Mixolydisk</option><option>Jonisk (dur)</option><option>Eolisk (naturlig moll)</option></select></label><button className="bass-play secondary" onClick={playBassScale} disabled={soundLoading}><Volume2 size={17}/>{bassCopy.listenScale}</button></aside></div><div className="bass-board-panel"><div className="fretboard-head"><div><span>{bassCopy.fretboard}</span><h3>{selectedBass.name} · {bassScale}</h3></div><small>{bassCopy.fretHint}</small></div><BassFretboard root={selectedBass.root} ints={selectedBass.ints} scaleInts={scaleIntervals[bassScale]||selectedBass.ints} activePitch={activeBassPitch} onNote={midi=>void playBassNotes([midi])}/></div><div className="bass-tuner"><div><p className="kicker">{bassCopy.tuner}</p><label>{bassCopy.tuning}<select value={bassTuningId} onChange={e=>{setBassTuningId(e.target.value);setBassString(0)}}>{bassTunings.map(t=><option value={t.id} key={t.id}>{t.name} — {t.hint}</option>)}</select></label><label className="repeat-tone"><input type="checkbox" checked={bassRepeat} onChange={e=>{setBassRepeat(e.target.checked);if(e.target.checked)void playBassString(bassString)}}/><span><b>{bassCopy.repeat}</b></span></label></div><div className="bass-string-picker" style={{gridTemplateColumns:`repeat(${activeBassTuning.midis.length},1fr)`}}>{activeBassTuning.midis.map((midi,index)=><button key={`${midi}-${index}`} className={bassString===index?'selected':''} onClick={()=>void playBassString(index)}><span>{activeBassTuning.midis.length-index}</span><strong>{midiLabel(midi).replace(/[0-9]/g,'')}</strong><small>{midiLabel(midi)}</small></button>)}</div><div className="bass-tuner-note"><span>{bassCopy.selectedString}</span><strong>{midiLabel(activeBassTuning.midis[bassString])}</strong><button onClick={()=>void playBassString(bassString)} disabled={soundLoading}><Volume2 size={16}/>{bassCopy.playString}</button></div></div></section>
-<section className="practice" id="ova"><div className="practice-copy"><p className="eyebrow"><Music2 size={14}/>{practiceCopy.eyebrow}</p><h2>{practiceCopy.title}<br/><em>{practiceCopy.titleEm}</em></h2><p>{practiceCopy.intro}</p><div className="practice-settings"><label>{practiceCopy.tempo}<span><input type="range" min="50" max="160" step="5" value={tempo} disabled={practicing} onChange={e=>setTempo(Number(e.target.value))}/><b>{tempo}</b> {practiceCopy.bpm}</span></label><label className="metronome-toggle"><input type="checkbox" checked={metronome} disabled={practicing} onChange={e=>setMetronome(e.target.checked)}/><span><b>{practiceCopy.metronome}</b><small>{practiceCopy.fourFour}</small></span></label></div></div><div className="practice-panel"><div className="progression-head"><span>{practiceCopy.progression}</span><small>{practiceCopy.fourFour}</small></div><div className="progression-list">{progression.map((name,i)=><div className={`progression-chord ${practicing&&practiceChordIndex===i?'playing':''}`} key={`${i}-${name}`}><span>{i+1}</span><select value={name} disabled={practicing} onChange={e=>updateProgression(i,e.target.value)}>{chords.map(c=><option value={c.name} key={c.name}>{c.name} — {c.full}</option>)}</select>{progression.length>1&&<button disabled={practicing} onClick={()=>setProgression(items=>items.filter((_,index)=>index!==i))} aria-label={practiceCopy.remove}><Trash2 size={16}/></button>}</div>)}</div>{progression.length<8&&<button className="add-chord" disabled={practicing} onClick={()=>setProgression(items=>[...items,'C'])}><Plus size={16}/>{practiceCopy.add}</button>}<div className="practice-status"><div><span>{practiceCopy.now}</span><strong>{progression[practiceChordIndex]}</strong><small>{practiceCopy.beat} {practiceBeat+1} / 4</small></div><div className="beat-dots">{[0,1,2,3].map(i=><i key={i} className={practicing&&practiceBeat===i?'active':''}/>)}</div><button className={practicing?'stop-practice':''} onClick={practicing?stopSound:startPractice} disabled={soundLoading}>{practicing?<Square size={18}/>:<Volume2 size={18}/>} {practicing?practiceCopy.stop:practiceCopy.start}</button></div><div className="melody-recorder"><div className="melody-head"><div><span>{melodyCopy.title}</span><p>{melodyCopy.intro}</p></div><strong>3 {melodyExtras.track}</strong></div><div className="melody-master-actions"><button onClick={playAllMelodies} disabled={!melodyTracks.some(track=>track.url)||recordingTrack!==null}><Volume2 size={15}/>{melodyExtras.playAll}</button><button onClick={pauseAllMelodies} disabled={!melodyTracks.some(track=>track.playing)}><Square size={15}/>{melodyExtras.pauseAll}</button><button className="erase-melody" onClick={eraseAllMelodies} disabled={!melodyTracks.some(track=>track.url)||recordingTrack!==null}><Trash2 size={15}/>{melodyExtras.eraseAll}</button></div><div className="melody-tracks">{melodyTracks.map((track,index)=>{const isRecording=recordingTrack===index,time=isRecording?recordingTime:track.duration;return <article className={`melody-track ${isRecording?'recording':''} ${track.playing?'playing':''}`} key={index}><div className="melody-track-head"><span>{melodyExtras.track} {index+1}</span><strong>{isRecording?melodyCopy.recording:track.url?melodyCopy.saved:melodyCopy.ready}</strong></div><div className="recording-time"><i style={{width:`${Math.min(100,time/30*100)}%`}}/><span>{time.toFixed(1)} / 30.0 s</span></div><div className="melody-actions"><button className="record-button" disabled={recordingTrack!==null&&recordingTrack!==index} onClick={isRecording?stopRecording:()=>startRecording(index)}>{isRecording?<Square size={15}/>:<Mic size={15}/>} {isRecording?melodyCopy.stop:melodyCopy.record}</button><button onClick={()=>toggleMelodyTrack(index)} disabled={!track.url||recordingTrack!==null}><Volume2 size={15}/>{track.playing?melodyCopy.pause:melodyCopy.play}</button><button className="erase-melody" onClick={()=>eraseMelodyTrack(index)} disabled={!track.url||recordingTrack!==null}><Trash2 size={15}/>{melodyCopy.erase}</button></div></article>})}</div><small>{melodyCopy.local}</small>{melodyError&&<p className="melody-error">{melodyError}</p>}</div></div></section>
-{recordedDurations.length>=2&&<section className="loop-sync"><div><span>{syncCopy.title}</span><strong>{syncLength!==null?`${syncCopy.active} ${syncLength.toFixed(1)} s`:syncCopy.full}</strong></div><label><input type="range" min="0.5" max={Math.max(.5,shortestRecording)} step="0.1" value={syncLength??shortestRecording} disabled={recordingTrack!==null} onChange={e=>applySyncLength(Number(e.target.value))}/><b>{(syncLength??shortestRecording).toFixed(1)} s</b></label><div><button onClick={()=>applySyncLength(shortestRecording)} disabled={recordingTrack!==null}>{syncCopy.shortest}</button><button onClick={useFullMelodyLengths} disabled={syncLength===null}>{syncCopy.full}</button></div></section>}
-<section className={`listener ${listening?'on':''}`} id="lyssna"><div className="listen-copy"><p className="eyebrow"><Volume2 size={14}/>{copy.recognition}</p><h2>{copy.hear}<br/>{copy.whatPlay}</h2><p>{copy.micInfo}</p><button onClick={listening?stop:start}>{listening?<Square size={19}/>:<Mic size={20}/>} {listening?copy.stop:copy.startMic}</button>{error&&<p className="error">{error}</p>}</div>
-<div className="detector" aria-live="polite"><div className="status"><i/><span>{listening?copy.listening:copy.ready}</span><small>{listening?copy.playChord:copy.micOff}</small></div><div className="result"><span>{copy.identified}</span><strong>{detected}</strong><small>{detected==='—'?copy.waiting:`${confidence}${copy.confidence}`}</small></div><div className="meter"><i style={{width:`${level}%`}}/></div><div className="meter-label"><span>{copy.level}</span><span>{Math.round(level)}%</span></div><div className="bars">{[.5,.8,.35,.95,.65,.4,.75,.3,.55,.88,.45,.7].map((v,i)=><i key={i} style={{height:`${Math.max(10,listening?v*level:10)}%`}}/>)}</div></div></section>
-<section className="tuner" id="stamma"><div className="tuner-copy"><p className="eyebrow"><Volume2 size={14}/>{copy.tuneRef}</p><h2>{copy.listenCompare}<br/><em>{copy.tuneAfter}</em></h2><p>{copy.tuneInfo}</p><label className="tuning-select">{copy.tuning}<select value={tuningId} onChange={e=>{setTuningId(e.target.value);setSelectedString(0)}}>{['Vanliga','Öppna','Artist & stil','Flersträngat'].map(group=><optgroup label={group} key={group}>{tuningPresets.filter(t=>t.group===group).map(t=><option value={t.id} key={t.id}>{t.name} — {t.hint}</option>)}</optgroup>)}</select></label><label className="repeat-tone"><input type="checkbox" checked={repeatTone} onChange={e=>{setRepeatTone(e.target.checked);if(e.target.checked)playString(selectedString)}}/><span><b>{copy.repeat}</b><small>{copy.everyFour}</small></span></label><button onClick={()=>playString(selectedString)} disabled={soundLoading}><Volume2 size={20}/>{soundLoading?copy.loadingGuitar:copy.playAgain}</button></div><div className="reference-tuner"><div className="reference-head"><span>{activeTuning.name}</span><small>{repeatTone?copy.autoOn:activeTuning.hint}</small></div><div className="reference-note"><span>{copy.selectedString}</span><strong>{midiLabel(activeTuning.midis[selectedString])}</strong><small>{(440*Math.pow(2,(activeTuning.midis[selectedString]-69)/12)).toFixed(2)} Hz</small></div><div className="reference-strings" style={{gridTemplateColumns:`repeat(${activeTuning.midis.length},1fr)`}}>{activeTuning.midis.map((m,i)=><button key={`${m}-${i}`} className={selectedString===i?'selected':''} onClick={()=>playString(i)} disabled={soundLoading}><span>{activeTuning.midis.length-i}</span><strong>{midiLabel(m).replace(/[0-9]/g,'')}</strong><small>{midiLabel(m)}</small><Volume2 size={15}/></button>)}</div><div className="reference-help"><b>{copy.howTune}</b><p>{copy.tuneHelp}</p></div></div></section>
-<footer><span><Guitar size={18}/>Grepp</span><p>{copy.built}</p><a className="support-link" href="https://buymeacoffee.com/niacloneq" target="_blank" rel="noreferrer">{copy.support}</a></footer></main>}
+const templates: [string, number[]][] = pitchNames.flatMap(
+  (name, root) =>
+    [
+      [name, [root, (root + 4) % 12, (root + 7) % 12]],
+      [`${name}m`, [root, (root + 3) % 12, (root + 7) % 12]],
+    ] as [string, number[]][],
+);
+const roots = [
+  'C',
+  'C# / Db',
+  'D',
+  'D# / Eb',
+  'E',
+  'F',
+  'F# / Gb',
+  'G',
+  'G# / Ab',
+  'A',
+  'A# / Bb',
+  'B',
+];
+const noteNames = [
+  'C',
+  'C#',
+  'D',
+  'Eb',
+  'E',
+  'F',
+  'F#',
+  'G',
+  'Ab',
+  'A',
+  'Bb',
+  'B',
+];
+const diagramQualities = [
+  {
+    symbol: '',
+    label: 'dur',
+    ints: [0, 4, 7],
+    e: [0, 2, 2, 1, 0, 0],
+    a: [-1, 0, 2, 2, 2, 0],
+    ef: [0, 3, 4, 2, 1, 1],
+    af: [0, 1, 2, 3, 4, 1],
+  },
+  {
+    symbol: 'm',
+    label: 'moll',
+    ints: [0, 3, 7],
+    e: [0, 2, 2, 0, 0, 0],
+    a: [-1, 0, 2, 2, 1, 0],
+    ef: [0, 3, 4, 1, 1, 1],
+    af: [0, 1, 3, 4, 2, 1],
+  },
+  {
+    symbol: '7',
+    label: 'dominant 7',
+    ints: [0, 4, 7, 10],
+    e: [0, 2, 0, 1, 0, 0],
+    a: [-1, 0, 2, 0, 2, 0],
+    ef: [0, 3, 1, 2, 1, 1],
+    af: [0, 1, 3, 1, 4, 1],
+  },
+  {
+    symbol: 'maj7',
+    label: 'maj 7',
+    ints: [0, 4, 7, 11],
+    e: [0, 2, 1, 1, 0, 0],
+    a: [-1, 0, 2, 1, 2, 0],
+    ef: [0, 3, 2, 2, 1, 1],
+    af: [0, 1, 3, 2, 4, 1],
+  },
+  {
+    symbol: 'm7',
+    label: 'moll 7',
+    ints: [0, 3, 7, 10],
+    e: [0, 2, 0, 0, 0, 0],
+    a: [-1, 0, 2, 0, 1, 0],
+    ef: [0, 3, 1, 1, 1, 1],
+    af: [0, 1, 3, 1, 2, 1],
+  },
+];
+const generatedChords: Chord[] = pitchNames.flatMap((root, rootIndex) =>
+  diagramQualities.map((q) => {
+    const eFret = (rootIndex - 4 + 12) % 12,
+      aFret = (rootIndex - 9 + 12) % 12,
+      useE = eFret <= aFret,
+      fret = useE ? eFret : aFret,
+      shape = useE ? q.e : q.a,
+      fingers = useE ? q.ef : q.af;
+    return {
+      name: `${root}${q.symbol}`,
+      full: `${root}-${q.label}`,
+      frets: shape.map((x) => (x < 0 ? -1 : x + fret)),
+      fingers,
+      notes: q.ints.map((i) => noteNames[(rootIndex + i) % 12]),
+      baseFret: fret >= 2 ? fret : 1,
+    };
+  }),
+);
+const chords: Chord[] = [
+  ...featuredChords,
+  ...generatedChords.filter(
+    (c) => !featuredChords.some((featured) => featured.name === c.name),
+  ),
+];
+const qualities = [
+  {
+    id: 'maj',
+    label: 'Dur',
+    symbol: '',
+    ints: [0, 4, 7],
+    scales: ['Jonisk (dur)', 'Durpentatonisk', 'Lydisk'],
+  },
+  {
+    id: 'min',
+    label: 'Moll',
+    symbol: 'm',
+    ints: [0, 3, 7],
+    scales: ['Eolisk (naturlig moll)', 'Mollpentatonisk', 'Dorisk'],
+  },
+  {
+    id: '7',
+    label: 'Dominant 7',
+    symbol: '7',
+    ints: [0, 4, 7, 10],
+    scales: ['Mixolydisk', 'Dominant pentatonisk', 'Altererad (spänning)'],
+  },
+  {
+    id: 'maj7',
+    label: 'Maj 7',
+    symbol: 'maj7',
+    ints: [0, 4, 7, 11],
+    scales: ['Jonisk (dur)', 'Lydisk', 'Durpentatonisk'],
+  },
+  {
+    id: 'm7',
+    label: 'Moll 7',
+    symbol: 'm7',
+    ints: [0, 3, 7, 10],
+    scales: ['Dorisk', 'Eolisk', 'Mollpentatonisk'],
+  },
+  {
+    id: 'dim',
+    label: 'Förminskat',
+    symbol: 'dim',
+    ints: [0, 3, 6],
+    scales: ['Hel-halv-diminished', 'Lokrisk', 'Symmetrisk diminished'],
+  },
+  {
+    id: 'dim7',
+    label: 'Förminskat 7',
+    symbol: 'dim7',
+    ints: [0, 3, 6, 9],
+    scales: ['Hel-halv-diminished', 'Diminished arpeggio'],
+  },
+  {
+    id: 'aug',
+    label: 'Förstorat',
+    symbol: 'aug',
+    ints: [0, 4, 8],
+    scales: ['Heltonsskala', 'Lydisk augmented'],
+  },
+  {
+    id: 'sus2',
+    label: 'Sus 2',
+    symbol: 'sus2',
+    ints: [0, 2, 7],
+    scales: ['Jonisk', 'Mixolydisk', 'Durpentatonisk'],
+  },
+  {
+    id: 'sus4',
+    label: 'Sus 4',
+    symbol: 'sus4',
+    ints: [0, 5, 7],
+    scales: ['Mixolydisk', 'Jonisk', 'Durpentatonisk'],
+  },
+  {
+    id: '6',
+    label: 'Dur 6',
+    symbol: '6',
+    ints: [0, 4, 7, 9],
+    scales: ['Jonisk', 'Durpentatonisk', 'Lydisk'],
+  },
+  {
+    id: 'm6',
+    label: 'Moll 6',
+    symbol: 'm6',
+    ints: [0, 3, 7, 9],
+    scales: ['Dorisk', 'Melodisk moll'],
+  },
+  {
+    id: '9',
+    label: 'Dominant 9',
+    symbol: '9',
+    ints: [0, 4, 7, 10, 2],
+    scales: ['Mixolydisk', 'Bebop dominant'],
+  },
+  {
+    id: 'maj9',
+    label: 'Maj 9',
+    symbol: 'maj9',
+    ints: [0, 4, 7, 11, 2],
+    scales: ['Jonisk', 'Lydisk'],
+  },
+  {
+    id: 'm9',
+    label: 'Moll 9',
+    symbol: 'm9',
+    ints: [0, 3, 7, 10, 2],
+    scales: ['Dorisk', 'Eolisk'],
+  },
+  {
+    id: 'add9',
+    label: 'Add 9',
+    symbol: 'add9',
+    ints: [0, 4, 7, 2],
+    scales: ['Jonisk', 'Durpentatonisk'],
+  },
+  {
+    id: '11',
+    label: 'Dominant 11',
+    symbol: '11',
+    ints: [0, 4, 7, 10, 2, 5],
+    scales: ['Mixolydisk', 'Bebop dominant'],
+  },
+  {
+    id: '13',
+    label: 'Dominant 13',
+    symbol: '13',
+    ints: [0, 4, 7, 10, 2, 9],
+    scales: ['Mixolydisk', 'Bebop dominant'],
+  },
+];
+const scaleIntervals: Record<string, number[]> = {
+  'Jonisk (dur)': [0, 2, 4, 5, 7, 9, 11],
+  Jonisk: [0, 2, 4, 5, 7, 9, 11],
+  Durpentatonisk: [0, 2, 4, 7, 9],
+  Lydisk: [0, 2, 4, 6, 7, 9, 11],
+  'Eolisk (naturlig moll)': [0, 2, 3, 5, 7, 8, 10],
+  Eolisk: [0, 2, 3, 5, 7, 8, 10],
+  Mollpentatonisk: [0, 3, 5, 7, 10],
+  Dorisk: [0, 2, 3, 5, 7, 9, 10],
+  Mixolydisk: [0, 2, 4, 5, 7, 9, 10],
+  'Dominant pentatonisk': [0, 2, 4, 7, 10],
+  'Altererad (spänning)': [0, 1, 3, 4, 6, 8, 10],
+  'Hel-halv-diminished': [0, 2, 3, 5, 6, 8, 9, 11],
+  Lokrisk: [0, 1, 3, 5, 6, 8, 10],
+  'Symmetrisk diminished': [0, 2, 3, 5, 6, 8, 9, 11],
+  'Diminished arpeggio': [0, 3, 6, 9],
+  Heltonsskala: [0, 2, 4, 6, 8, 10],
+  'Lydisk augmented': [0, 2, 4, 6, 8, 9, 11],
+  'Melodisk moll': [0, 2, 3, 5, 7, 9, 11],
+  'Bebop dominant': [0, 2, 4, 5, 7, 9, 10, 11],
+};
+function Diagram({ c, large = false }: { c: Chord; large?: boolean }) {
+  const w = large ? 230 : 150,
+    h = large ? 250 : 170,
+    l = w * 0.18,
+    t = h * 0.18,
+    gw = w * 0.64,
+    gh = h * 0.62,
+    base = c.baseFret || 1,
+    displayFret = (f: number) => (base > 1 ? f - base + 1 : f);
+  return (
+    <svg
+      viewBox={`0 0 ${w} ${h}`}
+      className={large ? 'diagram large' : 'diagram'}
+      role="img"
+      aria-label={`Greppdiagram för ${c.full}`}
+    >
+      {base > 1 && (
+        <text
+          x={l - (large ? 18 : 14)}
+          y={t + gh / 10 + 4}
+          className="base-fret"
+        >
+          {base}
+        </text>
+      )}
+      {[0, 1, 2, 3, 4, 5].map((i) => (
+        <line
+          key={'s' + i}
+          x1={l + (i * gw) / 5}
+          y1={t}
+          x2={l + (i * gw) / 5}
+          y2={t + gh}
+          className="string"
+        />
+      ))}
+      {[0, 1, 2, 3, 4, 5].map((i) => (
+        <line
+          key={'f' + i}
+          x1={l}
+          y1={t + (i * gh) / 5}
+          x2={l + gw}
+          y2={t + (i * gh) / 5}
+          className={i ? 'fret' : 'nut'}
+        />
+      ))}
+      {c.frets.map(
+        (f, i) =>
+          f > 0 && (
+            <g key={i}>
+              <circle
+                cx={l + (i * gw) / 5}
+                cy={t + ((displayFret(f) - 0.5) * gh) / 5}
+                r={large ? 11 : 8}
+              />
+              <text
+                x={l + (i * gw) / 5}
+                y={t + ((displayFret(f) - 0.5) * gh) / 5 + 4}
+              >
+                {c.fingers[i]}
+              </text>
+            </g>
+          ),
+      )}
+      {c.frets.map((f, i) => (
+        <text key={'o' + i} x={l + (i * gw) / 5} y={t - 12} className="mark">
+          {f === 0 ? '○' : f < 0 ? '×' : ''}
+        </text>
+      ))}
+    </svg>
+  );
+}
+function ScaleFretboard({
+  root,
+  scaleInts,
+  chordInts,
+  activePitch,
+}: {
+  root: number;
+  scaleInts: number[];
+  chordInts: number[];
+  activePitch: number | null;
+}) {
+  const strings = [4, 11, 7, 2, 9, 4],
+    frets = Array.from({ length: 13 }, (_, i) => i),
+    inScale = (pc: number) => scaleInts.includes((pc - root + 12) % 12),
+    kind = (pc: number) =>
+      pc === root
+        ? 'root'
+        : chordInts.includes((pc - root + 12) % 12)
+          ? 'chord'
+          : 'scale';
+  return (
+    <div className="fretboard-wrap">
+      <div className="fret-legend">
+        <span>
+          <i className="root" />
+          Grundton
+        </span>
+        <span>
+          <i className="chord" />
+          Ackordton
+        </span>
+        <span>
+          <i className="scale" />
+          Skalton
+        </span>
+      </div>
+      <div className="fretboard" aria-label="Greppbräda med skalans toner">
+        {strings.map((open, stringIndex) =>
+          frets.map((fret) => {
+            const pc = (open + fret) % 12;
+            return (
+              <div
+                className={`fret-cell ${fret === 0 ? 'open' : ''}`}
+                key={`${stringIndex}-${fret}`}
+              >
+                {inScale(pc) && (
+                  <b
+                    className={`${kind(pc)} ${activePitch === pc ? 'active-tone' : ''}`}
+                  >
+                    {noteNames[pc]}
+                  </b>
+                )}
+              </div>
+            );
+          }),
+        )}
+      </div>
+      <div className="fret-numbers">
+        {frets.map((f) => (
+          <span key={f}>{f === 0 ? 'Öppen' : f}</span>
+        ))}
+      </div>
+    </div>
+  );
+}
+type BassPattern = { name: string; full: string; root: number; ints: number[] };
+const bassQualities = [
+  { id: 'maj', symbol: '', label: 'dur', ints: [0, 4, 7] },
+  { id: 'min', symbol: 'm', label: 'moll', ints: [0, 3, 7] },
+  { id: '7', symbol: '7', label: 'dominant 7', ints: [0, 4, 7, 10] },
+];
+const bassPatterns: BassPattern[] = pitchNames.flatMap((root, rootIndex) =>
+  bassQualities.map((q) => ({
+    name: `${root}${q.symbol}`,
+    full: `${root}-${q.label}`,
+    root: rootIndex,
+    ints: q.ints,
+  })),
+);
+const bassTunings = [
+  {
+    id: 'bass-standard',
+    name: '4-strängad standard',
+    hint: 'E–A–D–G',
+    midis: [28, 33, 38, 43],
+  },
+  {
+    id: 'bass-drop-d',
+    name: '4-strängad Drop D',
+    hint: 'D–A–D–G',
+    midis: [26, 33, 38, 43],
+  },
+  {
+    id: 'bass-eb',
+    name: 'Halvton ned',
+    hint: 'Eb–Ab–Db–Gb',
+    midis: [27, 32, 37, 42],
+  },
+  {
+    id: 'bass-5',
+    name: '5-strängad standard',
+    hint: 'B–E–A–D–G',
+    midis: [23, 28, 33, 38, 43],
+  },
+  {
+    id: 'bass-5-high',
+    name: '5-strängad hög C',
+    hint: 'E–A–D–G–C',
+    midis: [28, 33, 38, 43, 48],
+  },
+  {
+    id: 'bass-6',
+    name: '6-strängad standard',
+    hint: 'B–E–A–D–G–C',
+    midis: [23, 28, 33, 38, 43, 48],
+  },
+];
+function BassFretboard({
+  root,
+  ints,
+  scaleInts,
+  activePitch,
+  position = 1,
+  onNote,
+}: {
+  root: number;
+  ints: number[];
+  scaleInts: number[];
+  activePitch: number | null;
+  position?: number;
+  onNote?: (midi: number) => void;
+}) {
+  const strings = [43, 38, 33, 28],
+    frets = Array.from({ length: 5 }, (_, i) => position + i),
+    inScale = (pc: number) => scaleInts.includes((pc - root + 12) % 12),
+    kind = (pc: number) =>
+      pc === root
+        ? 'root'
+        : ints.includes((pc - root + 12) % 12)
+          ? 'chord'
+          : 'scale';
+  return (
+    <div className="bass-fret-wrap">
+      <div className="fret-legend">
+        <span>
+          <i className="root" />
+          Grundton
+        </span>
+        <span>
+          <i className="chord" />
+          Ackordton
+        </span>
+        <span>
+          <i className="scale" />
+          Skalton
+        </span>
+      </div>
+      <div className="finger-guide">
+        <span>
+          <i>1</i>Pekfinger
+        </span>
+        <span>
+          <i>2</i>Långfinger
+        </span>
+        <span>
+          <i>3</i>Ringfinger
+        </span>
+        <span>
+          <i>4</i>Lillfinger
+        </span>
+      </div>
+      <div className="bass-fretboard finger-bass-board">
+        {strings.map((open, stringIndex) =>
+          frets.map((fret, fretIndex) => {
+            const midi = open + fret,
+              pc = midi % 12;
+            return (
+              <button
+                type="button"
+                onClick={() => inScale(pc) && onNote?.(midi)}
+                className="bass-fret-cell"
+                key={`${stringIndex}-${fret}`}
+                aria-label={inScale(pc) ? midiLabel(midi) : undefined}
+              >
+                {inScale(pc) && (
+                  <b
+                    className={`${kind(pc)} ${activePitch === pc ? 'active-tone' : ''}`}
+                  >
+                    <strong>{Math.min(4, fretIndex + 1)}</strong>
+                    <small>{noteNames[pc]}</small>
+                  </b>
+                )}
+              </button>
+            );
+          }),
+        )}
+      </div>
+      <div className="fret-numbers bass-numbers finger-bass-numbers">
+        {frets.map((f) => (
+          <span key={f}>Band {f}</span>
+        ))}
+      </div>
+      <p className="finger-note">
+        <b>1–4</b> visar rekommenderat finger: pekfinger, långfinger, ringfinger
+        och lillfinger.
+      </p>
+    </div>
+  );
+}
+function BassShapeDiagram({
+  pattern,
+  onNote,
+}: {
+  pattern: BassPattern;
+  onNote: (midi: number) => void;
+}) {
+  const strings = [
+      { label: 'G', midi: 43 },
+      { label: 'D', midi: 38 },
+      { label: 'A', midi: 33 },
+      { label: 'E', midi: 28 },
+    ],
+    rootFrets = strings.map((string) => (pattern.root - (string.midi % 12) + 12) % 12),
+    base = Math.min(...rootFrets.filter((fret) => fret <= 7)),
+    frets = Array.from({ length: 5 }, (_, index) => base + index);
+  return (
+    <div className="bass-shape">
+      <div className="bass-shape-head">
+        <b>Fingerplacering</b>
+        <span>Band {base}–{base + 4}</span>
+      </div>
+      <div className="bass-shape-grid">
+        {strings.map((string) => (
+          <div className="bass-shape-row" key={string.label}>
+            <span>{string.label}</span>
+            {frets.map((fret, fretIndex) => {
+              const midi = string.midi + fret,
+                pc = midi % 12,
+                interval = (pc - pattern.root + 12) % 12,
+                isTone = pattern.ints.includes(interval);
+              return (
+                <button
+                  type="button"
+                  key={fret}
+                  disabled={!isTone}
+                  onClick={() => isTone && onNote(midi)}
+                  aria-label={isTone ? `Finger ${fret === 0 ? 'öppen sträng' : Math.min(4, fretIndex + 1)}, ${noteNames[pc]}` : undefined}
+                >
+                  {isTone && (
+                    <i className={pc === pattern.root ? 'root' : ''}>
+                      <strong>{fret === 0 ? '0' : Math.min(4, fretIndex + 1)}</strong>
+                      <small>{noteNames[pc]}</small>
+                    </i>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+      <div className="bass-shape-fingers">
+        <span>1 pek</span><span>2 lång</span><span>3 ring</span><span>4 lill</span>
+      </div>
+    </div>
+  );
+}
+const pitch = (f: number) =>
+  (((Math.round(12 * Math.log2(f / 440)) + 69) % 12) + 12) % 12;
+const tuningPresets = [
+  {
+    id: 'standard',
+    group: 'Vanliga',
+    name: 'Standard',
+    hint: 'Allround',
+    midis: [40, 45, 50, 55, 59, 64],
+  },
+  {
+    id: 'drop-d',
+    group: 'Vanliga',
+    name: 'Drop D',
+    hint: 'Rock & metal',
+    midis: [38, 45, 50, 55, 59, 64],
+  },
+  {
+    id: 'eb',
+    group: 'Artist & stil',
+    name: 'Halvton ned',
+    hint: 'Hendrix / klassisk rock',
+    midis: [39, 44, 49, 54, 58, 63],
+  },
+  {
+    id: 'd-standard',
+    group: 'Vanliga',
+    name: 'Helton ned',
+    hint: 'Tyngre rock',
+    midis: [38, 43, 48, 53, 57, 62],
+  },
+  {
+    id: 'drop-c',
+    group: 'Artist & stil',
+    name: 'Drop C',
+    hint: 'Modern metal',
+    midis: [36, 43, 48, 53, 57, 62],
+  },
+  {
+    id: 'open-g',
+    group: 'Öppna',
+    name: 'Open G',
+    hint: 'Blues & Stones',
+    midis: [38, 43, 50, 55, 59, 62],
+  },
+  {
+    id: 'keith-g',
+    group: 'Artist & stil',
+    name: 'Keith Richards 5-strängad',
+    hint: 'Open G utan låg E',
+    midis: [43, 50, 55, 59, 62],
+  },
+  {
+    id: 'open-d',
+    group: 'Öppna',
+    name: 'Open D',
+    hint: 'Slide, folk & blues',
+    midis: [38, 45, 50, 54, 57, 62],
+  },
+  {
+    id: 'open-e',
+    group: 'Öppna',
+    name: 'Open E',
+    hint: 'Slide & klassisk rock',
+    midis: [40, 47, 52, 56, 59, 64],
+  },
+  {
+    id: 'dadgad',
+    group: 'Öppna',
+    name: 'DADGAD',
+    hint: 'Folk & keltiskt',
+    midis: [38, 45, 50, 55, 57, 62],
+  },
+  {
+    id: 'double-drop-d',
+    group: 'Vanliga',
+    name: 'Double Drop D',
+    hint: 'Singer-songwriter',
+    midis: [38, 45, 50, 55, 59, 62],
+  },
+  {
+    id: 'baritone-b',
+    group: 'Flersträngat',
+    name: 'Bariton B-standard',
+    hint: 'Baritongitarr',
+    midis: [35, 40, 45, 50, 54, 59],
+  },
+  {
+    id: '7-standard',
+    group: 'Flersträngat',
+    name: '7-strängad standard',
+    hint: 'B–E–A–D–G–B–E',
+    midis: [35, 40, 45, 50, 55, 59, 64],
+  },
+  {
+    id: '7-drop-a',
+    group: 'Flersträngat',
+    name: '7-strängad Drop A',
+    hint: 'Modern metal',
+    midis: [33, 40, 45, 50, 55, 59, 64],
+  },
+  {
+    id: '8-standard',
+    group: 'Flersträngat',
+    name: '8-strängad standard',
+    hint: 'F#–B–E–A–D–G–B–E',
+    midis: [30, 35, 40, 45, 50, 55, 59, 64],
+  },
+  {
+    id: '8-drop-e',
+    group: 'Flersträngat',
+    name: '8-strängad Drop E',
+    hint: 'Låg E1',
+    midis: [28, 35, 40, 45, 50, 55, 59, 64],
+  },
+];
+const midiLabel = (m: number) =>
+  pitchNames[((m % 12) + 12) % 12] + (Math.floor(m / 12) - 1);
+export default function Home() {
+  const [selected, setSelected] = useState(chords[0]),
+    [query, setQuery] = useState(''),
+    [theoryRoot, setTheoryRoot] = useState(0),
+    [qualityId, setQualityId] = useState('maj'),
+    [activeScaleIndex, setActiveScaleIndex] = useState(0),
+    [listening, setListening] = useState(false),
+    [soundLoading, setSoundLoading] = useState(false),
+    [selectedString, setSelectedString] = useState(0),
+    [tuningId, setTuningId] = useState('standard'),
+    [repeatTone, setRepeatTone] = useState(false),
+    [detected, setDetected] = useState('—'),
+    [confidence, setConfidence] = useState(0),
+    [level, setLevel] = useState(0),
+    [error, setError] = useState(''),
+    [language, setLanguage] = useState<Language>('sv'),
+    [progression, setProgression] = useState(['C', 'Am', 'F', 'G']),
+    [tempo, setTempo] = useState(80),
+    [metronome, setMetronome] = useState(true),
+    [practicing, setPracticing] = useState(false),
+    [practiceChordIndex, setPracticeChordIndex] = useState(0),
+    [practiceBeat, setPracticeBeat] = useState(0),
+    [recordingTrack, setRecordingTrack] = useState<number | null>(null),
+    [recordingTime, setRecordingTime] = useState(0),
+    [melodyTracks, setMelodyTracks] = useState<MelodyTrack[]>(() =>
+      Array.from({ length: 3 }, () => ({
+        url: null,
+        duration: 0,
+        playing: false,
+      })),
+    ),
+    [syncLength, setSyncLength] = useState<number | null>(null),
+    [melodyError, setMelodyError] = useState(''),
+    [selectedBass, setSelectedBass] = useState(bassPatterns[0]),
+    [bassQuery, setBassQuery] = useState(''),
+    [bassScale, setBassScale] = useState('Mollpentatonisk'),
+    [bassTuningId, setBassTuningId] = useState('bass-standard'),
+    [bassString, setBassString] = useState(0),
+    [bassRepeat, setBassRepeat] = useState(false),
+    [activeBassPitch, setActiveBassPitch] = useState<number | null>(null);
+  const audio = useRef<{
+      ctx: AudioContext;
+      stream: MediaStream;
+      raf: number;
+    } | null>(null),
+    soundCtx = useRef<AudioContext | null>(null),
+    guitar = useRef<{
+      play: (
+        note: number,
+        when?: number,
+        options?: Record<string, unknown>,
+      ) => unknown;
+    } | null>(null),
+    bass = useRef<{
+      play: (
+        note: number,
+        when?: number,
+        options?: Record<string, unknown>,
+      ) => unknown;
+      stop?: () => void;
+    } | null>(null),
+    practiceTimer = useRef<number | null>(null),
+    recorder = useRef<MediaRecorder | null>(null),
+    melodyStream = useRef<MediaStream | null>(null),
+    melodyChunks = useRef<Blob[]>([]),
+    recordingTimer = useRef<number | null>(null),
+    melodyAudio = useRef<(HTMLAudioElement | null)[]>([null, null, null]),
+    melodyCutoff = useRef<number | null>(null);
+  const quality = qualities.find((q) => q.id === qualityId)!;
+  const chordNotes = quality.ints.map((i) => noteNames[(theoryRoot + i) % 12]),
+    shownScaleIndex = Math.min(activeScaleIndex, quality.scales.length - 1),
+    shownScale = quality.scales[shownScaleIndex],
+    activeTuning = tuningPresets.find((t) => t.id === tuningId)!,
+    activeBassTuning = bassTunings.find((t) => t.id === bassTuningId)!,
+    copy = getCopy(language),
+    bassCopy = getBassCopy(language),
+    practiceCopy = getPracticeCopy(language),
+    melodyCopy = getMelodyCopy(language),
+    melodyExtras = getMelodyExtras(language),
+    syncCopy = getSyncCopy(language),
+    recordedDurations = melodyTracks
+      .filter((track) => track.url)
+      .map((track) => track.duration),
+    shortestRecording = recordedDurations.length
+      ? Math.min(...recordedDurations)
+      : 0;
+  const [bassMode, setBassMode] = useState(false),
+    [bassPosition, setBassPosition] = useState(1);
+  useEffect(() => {
+    const saved = window.localStorage.getItem(
+      'grepp-language',
+    ) as Language | null;
+    if (saved && languages.some(([code]) => code === saved)) setLanguage(saved);
+    const updateView = () => setBassMode(window.location.hash === '#bas');
+    updateView();
+    window.addEventListener('hashchange', updateView);
+    return () => window.removeEventListener('hashchange', updateView);
+  }, []);
+  const changeLanguage = (next: Language) => {
+    setLanguage(next);
+    window.localStorage.setItem('grepp-language', next);
+    document.documentElement.lang = next;
+  };
+  const [activeScalePitch, setActiveScalePitch] = useState<number | null>(null),
+    scaleTimers = useRef<number[]>([]);
+  const stop = () => {
+    const a = audio.current;
+    if (a) {
+      cancelAnimationFrame(a.raf);
+      a.stream.getTracks().forEach((t) => t.stop());
+      a.ctx.close();
+    }
+    audio.current = null;
+    setListening(false);
+    setLevel(0);
+  };
+  useEffect(
+    () => () => {
+      stop();
+      if (practiceTimer.current !== null)
+        window.clearInterval(practiceTimer.current);
+    },
+    [],
+  );
+  const stopSound = () => {
+    const instrument = guitar.current as { stop?: () => void } | null;
+    instrument?.stop?.();
+    bass.current?.stop?.();
+    scaleTimers.current.forEach((timer) => window.clearTimeout(timer));
+    scaleTimers.current = [];
+    if (practiceTimer.current !== null) {
+      window.clearInterval(practiceTimer.current);
+      practiceTimer.current = null;
+    }
+    setPracticing(false);
+    setPracticeBeat(0);
+    setActiveScalePitch(null);
+    setActiveBassPitch(null);
+  };
+  const playChord = async (c: Chord) => {
+    stop();
+    stopSound();
+    setError('');
+    setSoundLoading(true);
+    try {
+      if (!soundCtx.current) soundCtx.current = new AudioContext();
+      await soundCtx.current.resume();
+      if (!guitar.current) {
+        const mod = await import('soundfont-player');
+        guitar.current = await mod.default.instrument(
+          soundCtx.current,
+          'acoustic_guitar_nylon',
+          { soundfont: 'FluidR3_GM', format: 'mp3', gain: 0.72 },
+        );
+      }
+      const tuningMidi = [40, 45, 50, 55, 59, 64],
+        ctx = soundCtx.current;
+      c.frets.forEach((f, i) => {
+        if (f >= 0)
+          guitar.current?.play(tuningMidi[i] + f, ctx.currentTime + i * 0.055, {
+            duration: 2.8,
+            gain: 0.82,
+          });
+      });
+    } catch {
+      setError(
+        'Gitarrljudet kunde inte laddas. Kontrollera internetanslutningen och försök igen.',
+      );
+    } finally {
+      setSoundLoading(false);
+    }
+  };
+  const playScale = async () => {
+    stop();
+    stopSound();
+    setError('');
+    setSoundLoading(true);
+    try {
+      if (!soundCtx.current) soundCtx.current = new AudioContext();
+      await soundCtx.current.resume();
+      if (!guitar.current) {
+        const mod = await import('soundfont-player');
+        guitar.current = await mod.default.instrument(
+          soundCtx.current,
+          'acoustic_guitar_nylon',
+          { soundfont: 'FluidR3_GM', format: 'mp3', gain: 0.72 },
+        );
+      }
+      const ints = scaleIntervals[shownScale] || quality.ints,
+        up = [...ints, 12],
+        sequence = [...up, ...up.slice(0, -1).reverse()],
+        rootMidi = 48 + theoryRoot,
+        ctx = soundCtx.current;
+      sequence.forEach((interval, i) =>
+        guitar.current?.play(rootMidi + interval, ctx.currentTime + i * 0.34, {
+          duration: 0.75,
+          gain: 0.8,
+        }),
+      );
+      const timers = sequence.map((interval, i) =>
+        window.setTimeout(
+          () => setActiveScalePitch((theoryRoot + interval) % 12),
+          i * 340,
+        ),
+      );
+      timers.push(
+        window.setTimeout(
+          () => setActiveScalePitch(null),
+          sequence.length * 340,
+        ),
+      );
+      scaleTimers.current = timers;
+    } catch {
+      setError(
+        'Skalljudet kunde inte laddas. Kontrollera internetanslutningen och försök igen.',
+      );
+    } finally {
+      setSoundLoading(false);
+    }
+  };
+  const playString = async (index: number) => {
+    stop();
+    stopSound();
+    setSelectedString(index);
+    setError('');
+    setSoundLoading(true);
+    try {
+      if (!soundCtx.current) soundCtx.current = new AudioContext();
+      await soundCtx.current.resume();
+      if (!guitar.current) {
+        const mod = await import('soundfont-player');
+        guitar.current = await mod.default.instrument(
+          soundCtx.current,
+          'acoustic_guitar_nylon',
+          { soundfont: 'FluidR3_GM', format: 'mp3', gain: 0.72 },
+        );
+      }
+      guitar.current.play(
+        activeTuning.midis[index],
+        soundCtx.current.currentTime,
+        { duration: 4.5, gain: 0.9 },
+      );
+    } catch {
+      setError(
+        'Referenstonen kunde inte laddas. Kontrollera internetanslutningen och försök igen.',
+      );
+    } finally {
+      setSoundLoading(false);
+    }
+  };
+  const ensureBass = async () => {
+    if (!soundCtx.current) soundCtx.current = new AudioContext();
+    await soundCtx.current.resume();
+    if (!bass.current) {
+      const mod = await import('soundfont-player');
+      bass.current = await mod.default.instrument(
+        soundCtx.current,
+        'electric_bass_pick',
+        { soundfont: 'FluidR3_GM', format: 'mp3', gain: 0.76 },
+      );
+    }
+    return soundCtx.current;
+  };
+  const playBassNotes = async (midis: number[]) => {
+    stop();
+    stopSound();
+    setError('');
+    setSoundLoading(true);
+    try {
+      const ctx = await ensureBass();
+      midis.forEach((midi, i) =>
+        bass.current?.play(midi, ctx.currentTime + i * 0.18, {
+          duration: 0.42,
+          gain: 0.86,
+          attack: 0.004,
+          decay: 0.06,
+          sustain: 0.16,
+          release: 0.03,
+        }),
+      );
+    } catch {
+      setError(bassCopy.soundError);
+    } finally {
+      setSoundLoading(false);
+    }
+  };
+  const playBassPattern = () =>
+    playBassNotes(
+      [...selectedBass.ints, 12].map(
+        (interval) => 36 + selectedBass.root + interval,
+      ),
+    );
+  const playBassScale = async () => {
+    const ints = scaleIntervals[bassScale] || selectedBass.ints,
+      sequence = [...ints, 12, ...ints.slice().reverse()];
+    void playBassNotes(
+      sequence.map((interval) => 36 + selectedBass.root + interval),
+    );
+    const timers = sequence.map((interval, i) =>
+      window.setTimeout(
+        () => setActiveBassPitch((selectedBass.root + interval) % 12),
+        i * 220,
+      ),
+    );
+    timers.push(
+      window.setTimeout(() => setActiveBassPitch(null), sequence.length * 220),
+    );
+    scaleTimers.current = timers;
+  };
+  const playBassString = async (index: number) => {
+    setBassString(index);
+    await playBassNotes([activeBassTuning.midis[index]]);
+  };
+  const startPractice = async () => {
+    stop();
+    stopSound();
+    setError('');
+    setSoundLoading(true);
+    try {
+      if (!soundCtx.current) soundCtx.current = new AudioContext();
+      await soundCtx.current.resume();
+      if (!guitar.current) {
+        const mod = await import('soundfont-player');
+        guitar.current = await mod.default.instrument(
+          soundCtx.current,
+          'acoustic_guitar_nylon',
+          { soundfont: 'FluidR3_GM', format: 'mp3', gain: 0.72 },
+        );
+      }
+      const ctx = soundCtx.current,
+        tuningMidi = [40, 45, 50, 55, 59, 64];
+      let beat = 0;
+      const tick = () => {
+        const chordIndex = Math.floor(beat / 4) % progression.length,
+          setChord =
+            chords.find((c) => c.name === progression[chordIndex]) || chords[0];
+        setPracticeChordIndex(chordIndex);
+        setPracticeBeat(beat % 4);
+        if (beat % 4 === 0)
+          setChord.frets.forEach((f, i) => {
+            if (f >= 0)
+              guitar.current?.play(
+                tuningMidi[i] + f,
+                ctx.currentTime + i * 0.045,
+                { duration: Math.max(1.2, 230 / tempo), gain: 0.76 },
+              );
+          });
+        if (metronome) {
+          const osc = ctx.createOscillator(),
+            gain = ctx.createGain();
+          osc.frequency.value = beat % 4 === 0 ? 1120 : 820;
+          gain.gain.setValueAtTime(0.12, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(
+            0.001,
+            ctx.currentTime + 0.045,
+          );
+          osc.connect(gain).connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.05);
+        }
+        beat += 1;
+      };
+      setPracticing(true);
+      tick();
+      practiceTimer.current = window.setInterval(tick, 60000 / tempo);
+    } catch {
+      setError(
+        'Kompljudet kunde inte laddas. Kontrollera internetanslutningen och försök igen.',
+      );
+    } finally {
+      setSoundLoading(false);
+    }
+  };
+  const updateProgression = (index: number, name: string) =>
+    setProgression((items) =>
+      items.map((item, i) => (i === index ? name : item)),
+    );
+  const stopRecording = () => {
+    if (recorder.current?.state === 'recording') recorder.current.stop();
+  };
+  const startRecording = async (index: number) => {
+    if (recordingTrack !== null) return;
+    setMelodyError('');
+    stop();
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: false,
+          noiseSuppression: false,
+          autoGainControl: false,
+        },
+      });
+      melodyStream.current = stream;
+      const mimeType = [
+          'audio/webm;codecs=opus',
+          'audio/webm',
+          'audio/mp4',
+        ].find((type) => MediaRecorder.isTypeSupported(type)),
+        nextRecorder = new MediaRecorder(
+          stream,
+          mimeType ? { mimeType } : undefined,
+        ),
+        started = performance.now();
+      recorder.current = nextRecorder;
+      melodyChunks.current = [];
+      nextRecorder.ondataavailable = (e) => {
+        if (e.data.size) melodyChunks.current.push(e.data);
+      };
+      nextRecorder.onstop = () => {
+        const duration = Math.min(30, (performance.now() - started) / 1000),
+          blob = new Blob(melodyChunks.current, {
+            type: nextRecorder.mimeType || 'audio/webm',
+          }),
+          url = URL.createObjectURL(blob);
+        melodyAudio.current[index]?.pause();
+        melodyAudio.current[index] = null;
+        if (melodyCutoff.current !== null && duration < melodyCutoff.current) {
+          melodyCutoff.current = duration;
+          setSyncLength(duration);
+        }
+        setMelodyTracks((items) =>
+          items.map((item, i) => {
+            if (i !== index) return item;
+            if (item.url) URL.revokeObjectURL(item.url);
+            return { url, duration, playing: false };
+          }),
+        );
+        melodyStream.current?.getTracks().forEach((track) => track.stop());
+        melodyStream.current = null;
+        if (recordingTimer.current !== null)
+          window.clearInterval(recordingTimer.current);
+        recordingTimer.current = null;
+        setRecordingTrack(null);
+        setRecordingTime(0);
+      };
+      nextRecorder.start(100);
+      setRecordingTime(0);
+      setRecordingTrack(index);
+      recordingTimer.current = window.setInterval(() => {
+        const elapsed = Math.min(30, (performance.now() - started) / 1000);
+        setRecordingTime(elapsed);
+        if (elapsed >= 30 && nextRecorder.state === 'recording')
+          nextRecorder.stop();
+      }, 100);
+    } catch {
+      setMelodyError(copy.micOff);
+      setRecordingTrack(null);
+    }
+  };
+  const prepareMelodyAudio = (index: number, url: string) => {
+    const existing = melodyAudio.current[index];
+    if (existing && existing.src === url) return existing;
+    existing?.pause();
+    const element = new Audio(url),
+      restart = () => {
+        if (melodyCutoff.current !== null && element.dataset.wantPlay === '1') {
+          element.currentTime = 0;
+          void element.play();
+        }
+      };
+    element.loop = melodyCutoff.current === null;
+    element.dataset.wantPlay = '0';
+    element.addEventListener('timeupdate', () => {
+      const cutoff = melodyCutoff.current;
+      if (cutoff !== null && element.currentTime >= Math.max(0, cutoff - 0.04))
+        restart();
+    });
+    element.addEventListener('ended', restart);
+    melodyAudio.current[index] = element;
+    return element;
+  };
+  const applySyncLength = (length: number) => {
+    const safe = Math.max(0.5, Math.min(shortestRecording, length));
+    melodyCutoff.current = safe;
+    setSyncLength(safe);
+    melodyAudio.current.forEach((element) => {
+      if (element) {
+        element.loop = false;
+        if (element.currentTime >= safe) element.currentTime = 0;
+      }
+    });
+  };
+  const useFullMelodyLengths = () => {
+    melodyCutoff.current = null;
+    setSyncLength(null);
+    melodyAudio.current.forEach((element) => {
+      if (element) element.loop = true;
+    });
+  };
+  const toggleMelodyTrack = async (index: number) => {
+    const track = melodyTracks[index];
+    if (!track.url) return;
+    setMelodyError('');
+    if (track.playing) {
+      const element = melodyAudio.current[index];
+      if (element) {
+        element.dataset.wantPlay = '0';
+        element.pause();
+      }
+      setMelodyTracks((items) =>
+        items.map((item, i) =>
+          i === index ? { ...item, playing: false } : item,
+        ),
+      );
+      return;
+    }
+    const element = prepareMelodyAudio(index, track.url);
+    element.dataset.wantPlay = '1';
+    try {
+      await element.play();
+      setMelodyTracks((items) =>
+        items.map((item, i) =>
+          i === index ? { ...item, playing: true } : item,
+        ),
+      );
+    } catch {
+      element.dataset.wantPlay = '0';
+      setMelodyError(copy.loadingSound);
+    }
+  };
+  const playAllMelodies = async () => {
+    setMelodyError('');
+    const playable = melodyTracks
+      .map((track, index) => ({ track, index }))
+      .filter(({ track }) => track.url);
+    for (const { track, index } of playable) {
+      const element = prepareMelodyAudio(index, track.url!);
+      element.currentTime = 0;
+      element.dataset.wantPlay = '1';
+    }
+    try {
+      await Promise.all(
+        playable.map(({ index }) => melodyAudio.current[index]!.play()),
+      );
+      setMelodyTracks((items) =>
+        items.map((item) => (item.url ? { ...item, playing: true } : item)),
+      );
+    } catch {
+      playable.forEach(({ index }) => {
+        if (melodyAudio.current[index])
+          melodyAudio.current[index]!.dataset.wantPlay = '0';
+      });
+      setMelodyError(copy.loadingSound);
+    }
+  };
+  const pauseAllMelodies = () => {
+    melodyAudio.current.forEach((item) => {
+      if (item) {
+        item.dataset.wantPlay = '0';
+        item.pause();
+      }
+    });
+    setMelodyTracks((items) =>
+      items.map((item) => ({ ...item, playing: false })),
+    );
+  };
+  const eraseMelodyTrack = (index: number) => {
+    melodyAudio.current[index]?.pause();
+    melodyAudio.current[index] = null;
+    if (melodyTracks.filter((item, i) => i !== index && item.url).length < 2)
+      useFullMelodyLengths();
+    setMelodyTracks((items) =>
+      items.map((item, i) => {
+        if (i !== index) return item;
+        if (item.url) URL.revokeObjectURL(item.url);
+        return { url: null, duration: 0, playing: false };
+      }),
+    );
+    setMelodyError('');
+  };
+  const eraseAllMelodies = () => {
+    pauseAllMelodies();
+    useFullMelodyLengths();
+    melodyTracks.forEach((item) => {
+      if (item.url) URL.revokeObjectURL(item.url);
+    });
+    melodyAudio.current = [null, null, null];
+    setMelodyTracks(
+      Array.from({ length: 3 }, () => ({
+        url: null,
+        duration: 0,
+        playing: false,
+      })),
+    );
+    setMelodyError('');
+  };
+  useEffect(() => {
+    if (!repeatTone) return;
+    const timer = window.setInterval(() => playString(selectedString), 4000);
+    return () => window.clearInterval(timer);
+  }, [repeatTone, selectedString, tuningId]);
+  useEffect(() => {
+    if (!bassRepeat) return;
+    const timer = window.setInterval(
+      () => void playBassString(bassString),
+      4000,
+    );
+    return () => window.clearInterval(timer);
+  }, [bassRepeat, bassString, bassTuningId]);
+  const start = async () => {
+    stopSound();
+    setError('');
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: false,
+            noiseSuppression: false,
+            autoGainControl: false,
+          },
+        }),
+        ctx = new AudioContext();
+      await ctx.resume();
+      const an = ctx.createAnalyser();
+      an.fftSize = 16384;
+      an.smoothingTimeConstant = 0.55;
+      ctx.createMediaStreamSource(stream).connect(an);
+      const bins = new Float32Array(an.frequencyBinCount),
+        history: number[][] = [];
+      let stableName = '',
+        stableFrames = 0;
+      setListening(true);
+      const run = () => {
+        an.getFloatFrequencyData(bins);
+        let max = -120;
+        for (let i = 8; i < bins.length; i++) if (bins[i] > max) max = bins[i];
+        setLevel(Math.max(0, Math.min(100, (max + 72) * 2.2)));
+        const chroma = Array(12).fill(0),
+          floor = Math.max(-82, max - 34);
+        for (let i = 8; i < bins.length - 1; i++) {
+          const db = bins[i],
+            f = (i * ctx.sampleRate) / an.fftSize;
+          if (f > 1500) break;
+          if (f >= 70 && db > floor && db > bins[i - 1] && db >= bins[i + 1]) {
+            const prominence =
+              db - Math.max(bins[i - 2] || -120, bins[i + 2] || -120);
+            if (prominence > 0.25)
+              chroma[pitch(f)] +=
+                (Math.pow(10, (db - max) / 20) * Math.max(0.35, prominence)) /
+                Math.sqrt(f);
+          }
+        }
+        const compressed = chroma.map((v) => Math.sqrt(v)),
+          total = compressed.reduce((a, b) => a + b, 0);
+        if (total > 0.01 && max > -68) {
+          const norm = compressed.map((v) => v / total);
+          history.push(norm);
+          if (history.length > 12) history.shift();
+          if (history.length >= 6) {
+            const avg = norm.map(
+                (_, i) =>
+                  history.reduce((s, row) => s + row[i], 0) / history.length,
+              ),
+              scores = templates
+                .map(([name, notes]) => {
+                  const values = notes.map((n) => avg[n]),
+                    hit = values.reduce((s, v) => s + v, 0),
+                    coverage = values.filter((v) => v > 0.055).length,
+                    outside = 1 - hit;
+                  return {
+                    name,
+                    coverage,
+                    score:
+                      hit +
+                      Math.min(...values) * 1.8 +
+                      values[0] * 0.18 -
+                      outside * 0.28,
+                  };
+                })
+                .sort((a, b) => b.score - a.score),
+              best = scores[0];
+            if (best.coverage >= 2 && best.score - scores[1].score > 0.012) {
+              if (stableName === best.name) stableFrames++;
+              else {
+                stableName = best.name;
+                stableFrames = 1;
+              }
+              if (stableFrames >= 5) {
+                setDetected(best.name);
+                const margin = best.score - scores[1].score;
+                setConfidence(
+                  Math.round(
+                    Math.min(
+                      96,
+                      Math.max(50, 58 + margin * 260 + best.coverage * 7),
+                    ),
+                  ),
+                );
+              }
+            } else stableFrames = 0;
+          }
+        }
+        const raf = requestAnimationFrame(run);
+        if (audio.current) audio.current.raf = raf;
+      };
+      audio.current = { ctx, stream, raf: requestAnimationFrame(run) };
+    } catch {
+      setError(
+        'Mikrofonen kunde inte startas. Kontrollera webbläsarens mikrofonbehörighet.',
+      );
+    }
+  };
+  const selectChord = (chord: Chord) => {
+    setSelected(chord);
+    if (window.matchMedia('(max-width: 900px), (hover: none)').matches)
+      void playChord(chord);
+  };
+  return (
+    <main className={bassMode ? 'bass-page-mode' : 'guitar-page'}>
+      <header className="topbar">
+        <a className="brand" href={bassMode ? '#' : '#top'}>
+          <i>
+            <Guitar size={22} />
+          </i>
+          Grepp
+        </a>
+        <nav>
+          {bassMode ? (
+            <>
+              <a href="#bas">{bassCopy.library}</a>
+              <a href="#bas">{bassCopy.fretboard}</a>
+              <a href="#bas">{bassCopy.tuner}</a>
+              <a href="#">Gitarr</a>
+            </>
+          ) : (
+            <>
+              <a href="#ackord">{copy.navChords}</a>
+              <a href="#teori">{copy.navTheory}</a>
+              <a href="#bas">{bassCopy.nav}</a>
+              <a href="#ova">{practiceCopy.nav}</a>
+              <a href="#lyssna">{copy.navListen}</a>
+              <a href="#stamma">{copy.navTune}</a>
+            </>
+          )}
+        </nav>
+        <div className="header-tools">
+          <label className="language-picker">
+            <span>{copy.language}</span>
+            <select
+              value={language}
+              onChange={(e) => changeLanguage(e.target.value as Language)}
+              aria-label={copy.language}
+            >
+              {languages.map(([code, label]) => (
+                <option value={code} key={code}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </label>
+          {bassMode ? (
+            <a className="head-action" href="#">
+              Gitarr
+            </a>
+          ) : (
+            <a className="head-action" href="#lyssna">
+              <Mic size={17} />
+              {copy.identify}
+            </a>
+          )}
+        </div>
+      </header>
+      <section className="intro" id="top">
+        <div>
+          <p className="eyebrow">
+            <Sparkles size={14} />
+            {copy.eyebrow}
+          </p>
+          <h1>
+            {copy.hero}
+            <br />
+            <em>{copy.heroEm}</em>
+          </h1>
+        </div>
+        <p className="lead">{copy.lead}</p>
+      </section>
+      <section className="workspace" id="ackord">
+        <div className="library">
+          <div className="section-head">
+            <div>
+              <p className="kicker">{copy.library}</p>
+              <h2>{copy.find}</h2>
+            </div>
+            <span>
+              {chords.length} {copy.chords}
+            </span>
+          </div>
+          <label className="search">
+            <Search size={18} />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={copy.search}
+            />
+          </label>
+          <div className="grid">
+            {chords
+              .filter((c) =>
+                (c.name + c.full).toLowerCase().includes(query.toLowerCase()),
+              )
+              .map((c) => (
+                <button
+                  key={c.name}
+                  className={`card ${selected.name === c.name ? 'active' : ''}`}
+                  onClick={() => selectChord(c)}
+                  aria-label={`${c.full}. ${copy.listenTo} ${c.name}`}
+                >
+                  <span>
+                    <b>{c.name}</b>
+                    <small>{c.full}</small>
+                  </span>
+                  <Diagram c={c} />
+                  <i className="mobile-listen">
+                    <Volume2 size={13} />
+                  </i>
+                </button>
+              ))}
+          </div>
+        </div>
+        <aside className="detail">
+          <p className="kicker">{copy.selected}</p>
+          <div className="detail-head">
+            <h2>{selected.name}</h2>
+            <span>{selected.full}</span>
+          </div>
+          <Diagram c={selected} large />
+          <button
+            className="play-chord"
+            onClick={() => playChord(selected)}
+            disabled={soundLoading}
+          >
+            <Volume2 size={18} />
+            {soundLoading
+              ? copy.loadingGuitar
+              : `${copy.listenTo} ${selected.name}`}
+          </button>
+          <div className="notes">
+            <span>{copy.tones}</span>
+            {selected.notes.map((n) => (
+              <b key={n}>{n}</b>
+            ))}
+          </div>
+          <div className="diagram-guide">
+            <b>{copy.guide}</b>
+            <div>
+              <span>
+                <i>1–4</i>
+                {copy.fingers}
+              </span>
+              <span>
+                <i>○</i>
+                {copy.open}
+              </span>
+              <span>
+                <i>×</i>
+                {copy.mute}
+              </span>
+              <span>
+                <i className="fret-example">3</i>
+                {copy.startFret}
+              </span>
+            </div>
+          </div>
+          <p className="tip">{copy.tip}</p>
+        </aside>
+      </section>
+      <section className="theory" id="teori">
+        <div className="theory-intro">
+          <p className="eyebrow">
+            <Music2 size={14} />
+            {copy.navTheory}
+          </p>
+          <h2>
+            {copy.family}
+            <br />
+            <em>{copy.onePlace}</em>
+          </h2>
+          <p>
+            {formatCopy(copy.theoryIntro, {
+              n: qualities.length,
+              total: 12 * qualities.length,
+            })}
+          </p>
+          <div className="selectors">
+            <label>
+              {copy.root}
+              <select
+                value={theoryRoot}
+                onChange={(e) => setTheoryRoot(Number(e.target.value))}
+              >
+                {roots.map((r, i) => (
+                  <option value={i} key={r}>
+                    {r}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              {copy.type}
+              <select
+                value={qualityId}
+                onChange={(e) => setQualityId(e.target.value)}
+              >
+                {qualities.map((q) => (
+                  <option value={q.id} key={q.id}>
+                    {q.label} ({q.symbol || 'dur'})
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+        </div>
+        <div className="theory-card">
+          <div className="chord-summary">
+            <span>{copy.selected}</span>
+            <strong>
+              {roots[theoryRoot].split(' ')[0]}
+              {quality.symbol}
+            </strong>
+            <small>{quality.label}</small>
+          </div>
+          <div className="tone-row">
+            <span>{copy.chordTones}</span>
+            {chordNotes.map((n) => (
+              <b key={n}>{n}</b>
+            ))}
+          </div>
+          <h3>{copy.scales}</h3>
+          <div className="scale-list">
+            {quality.scales.map((scale, i) => {
+              const ints = scaleIntervals[scale] || quality.ints;
+              return (
+                <article
+                  key={scale}
+                  className={shownScaleIndex === i ? 'selected-scale' : ''}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setActiveScaleIndex(i)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setActiveScaleIndex(i);
+                    }
+                  }}
+                >
+                  <div>
+                    <span>0{i + 1}</span>
+                    <h4>
+                      {roots[theoryRoot].split(' ')[0]} {scale}
+                    </h4>
+                  </div>
+                  <p>
+                    {ints
+                      .map((x) => noteNames[(theoryRoot + x) % 12])
+                      .join(' · ')}
+                  </p>
+                  <small>
+                    {i === 0 ? copy.safe : i === 1 ? copy.color : copy.tension}
+                  </small>
+                </article>
+              );
+            })}
+          </div>
+          <div className="fretboard-head">
+            <div>
+              <span>{copy.fretboard}</span>
+              <h3>
+                {roots[theoryRoot].split(' ')[0]} {shownScale}
+              </h3>
+            </div>
+            <div className="fretboard-actions">
+              <small>{copy.chooseScale}</small>
+              <button
+                className="scale-play"
+                onClick={playScale}
+                disabled={soundLoading}
+              >
+                <Volume2 size={16} />
+                {soundLoading ? copy.loadingSound : copy.listenScale}
+              </button>
+            </div>
+          </div>
+          <ScaleFretboard
+            root={theoryRoot}
+            scaleInts={scaleIntervals[shownScale] || quality.ints}
+            chordInts={quality.ints}
+            activePitch={activeScalePitch}
+          />
+          <p className="theory-note">{copy.theoryNote}</p>
+        </div>
+      </section>
+      <section className="bass-section" id="bas">
+        <div className="bass-intro">
+          <p className="eyebrow">
+            <Music2 size={14} />
+            {bassCopy.eyebrow}
+          </p>
+          <h2>
+            {bassCopy.title}
+            <br />
+            <em>{bassCopy.titleEm}</em>
+          </h2>
+          <p>{bassCopy.intro}</p>
+        </div>
+        <div className="bass-workspace">
+          <div className="bass-library">
+            <div className="section-head">
+              <div>
+                <p className="kicker">{bassCopy.library}</p>
+                <h3>{bassCopy.find}</h3>
+              </div>
+              <span>
+                {bassPatterns.length} {bassCopy.patterns}
+              </span>
+            </div>
+            <label className="search">
+              <Search size={18} />
+              <input
+                value={bassQuery}
+                onChange={(e) => setBassQuery(e.target.value)}
+                placeholder={bassCopy.search}
+              />
+            </label>
+            <div className="bass-pattern-grid">
+              {bassPatterns
+                .filter((pattern) =>
+                  (pattern.name + pattern.full)
+                    .toLowerCase()
+                    .includes(bassQuery.toLowerCase()),
+                )
+                .map((pattern) => (
+                  <button
+                    key={pattern.name}
+                    className={
+                      selectedBass.name === pattern.name ? 'active' : ''
+                    }
+                    onClick={() => setSelectedBass(pattern)}
+                  >
+                    <strong>{pattern.name}</strong>
+                    <small>{pattern.full}</small>
+                    <span>
+                      {pattern.ints
+                        .map(
+                          (interval) =>
+                            noteNames[(pattern.root + interval) % 12],
+                        )
+                        .join(' · ')}
+                    </span>
+                  </button>
+                ))}
+            </div>
+          </div>
+          <aside className="bass-detail">
+            <p className="kicker">{bassCopy.selected}</p>
+            <div className="bass-selected">
+              <strong>{selectedBass.name}</strong>
+              <span>{selectedBass.full}</span>
+            </div>
+            <div className="bass-note-row">
+              <span>{bassCopy.notes}</span>
+              {selectedBass.ints.map((interval) => (
+                <b key={interval}>
+                  {noteNames[(selectedBass.root + interval) % 12]}
+                </b>
+              ))}
+            </div>
+            <BassShapeDiagram
+              pattern={selectedBass}
+              onNote={(midi) => void playBassNotes([midi])}
+            />
+            <button
+              className="bass-play"
+              onClick={playBassPattern}
+              disabled={soundLoading}
+            >
+              <Volume2 size={17} />
+              {bassCopy.play}
+            </button>
+            <label>
+              {bassCopy.scale}
+              <select
+                value={bassScale}
+                onChange={(e) => setBassScale(e.target.value)}
+              >
+                <option>Mollpentatonisk</option>
+                <option>Durpentatonisk</option>
+                <option>Dorisk</option>
+                <option>Mixolydisk</option>
+                <option>Jonisk (dur)</option>
+                <option>Eolisk (naturlig moll)</option>
+              </select>
+            </label>
+            <button
+              className="bass-play secondary"
+              onClick={playBassScale}
+              disabled={soundLoading}
+            >
+              <Volume2 size={17} />
+              {bassCopy.listenScale}
+            </button>
+          </aside>
+        </div>
+        <div className="bass-board-panel">
+          <div className="fretboard-head">
+            <div>
+              <span>{bassCopy.fretboard}</span>
+              <h3>
+                {selectedBass.name} · {bassScale}
+              </h3>
+            </div>
+            <small>{bassCopy.fretHint}</small>
+          </div>
+          <BassFretboard
+            root={selectedBass.root}
+            ints={selectedBass.ints}
+            scaleInts={scaleIntervals[bassScale] || selectedBass.ints}
+            activePitch={activeBassPitch}
+            onNote={(midi) => void playBassNotes([midi])}
+          />
+        </div>
+        <div className="bass-tuner">
+          <div>
+            <p className="kicker">{bassCopy.tuner}</p>
+            <label>
+              {bassCopy.tuning}
+              <select
+                value={bassTuningId}
+                onChange={(e) => {
+                  setBassTuningId(e.target.value);
+                  setBassString(0);
+                }}
+              >
+                {bassTunings.map((t) => (
+                  <option value={t.id} key={t.id}>
+                    {t.name} — {t.hint}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="repeat-tone">
+              <input
+                type="checkbox"
+                checked={bassRepeat}
+                onChange={(e) => {
+                  setBassRepeat(e.target.checked);
+                  if (e.target.checked) void playBassString(bassString);
+                }}
+              />
+              <span>
+                <b>{bassCopy.repeat}</b>
+              </span>
+            </label>
+          </div>
+          <div
+            className="bass-string-picker"
+            style={{
+              gridTemplateColumns: `repeat(${activeBassTuning.midis.length},1fr)`,
+            }}
+          >
+            {activeBassTuning.midis.map((midi, index) => (
+              <button
+                key={`${midi}-${index}`}
+                className={bassString === index ? 'selected' : ''}
+                onClick={() => void playBassString(index)}
+              >
+                <span>{activeBassTuning.midis.length - index}</span>
+                <strong>{midiLabel(midi).replace(/[0-9]/g, '')}</strong>
+                <small>{midiLabel(midi)}</small>
+              </button>
+            ))}
+          </div>
+          <div className="bass-tuner-note">
+            <span>{bassCopy.selectedString}</span>
+            <strong>{midiLabel(activeBassTuning.midis[bassString])}</strong>
+            <button
+              onClick={() => void playBassString(bassString)}
+              disabled={soundLoading}
+            >
+              <Volume2 size={16} />
+              {bassCopy.playString}
+            </button>
+          </div>
+        </div>
+      </section>
+      <section className="practice" id="ova">
+        <div className="practice-copy">
+          <p className="eyebrow">
+            <Music2 size={14} />
+            {practiceCopy.eyebrow}
+          </p>
+          <h2>
+            {practiceCopy.title}
+            <br />
+            <em>{practiceCopy.titleEm}</em>
+          </h2>
+          <p>{practiceCopy.intro}</p>
+          <div className="practice-settings">
+            <label>
+              {practiceCopy.tempo}
+              <span>
+                <input
+                  type="range"
+                  min="50"
+                  max="160"
+                  step="5"
+                  value={tempo}
+                  disabled={practicing}
+                  onChange={(e) => setTempo(Number(e.target.value))}
+                />
+                <b>{tempo}</b> {practiceCopy.bpm}
+              </span>
+            </label>
+            <label className="metronome-toggle">
+              <input
+                type="checkbox"
+                checked={metronome}
+                disabled={practicing}
+                onChange={(e) => setMetronome(e.target.checked)}
+              />
+              <span>
+                <b>{practiceCopy.metronome}</b>
+                <small>{practiceCopy.fourFour}</small>
+              </span>
+            </label>
+          </div>
+        </div>
+        <div className="practice-panel">
+          <div className="progression-head">
+            <span>{practiceCopy.progression}</span>
+            <small>{practiceCopy.fourFour}</small>
+          </div>
+          <div className="progression-list">
+            {progression.map((name, i) => (
+              <div
+                className={`progression-chord ${practicing && practiceChordIndex === i ? 'playing' : ''}`}
+                key={`${i}-${name}`}
+              >
+                <span>{i + 1}</span>
+                <select
+                  value={name}
+                  disabled={practicing}
+                  onChange={(e) => updateProgression(i, e.target.value)}
+                >
+                  {chords.map((c) => (
+                    <option value={c.name} key={c.name}>
+                      {c.name} — {c.full}
+                    </option>
+                  ))}
+                </select>
+                {progression.length > 1 && (
+                  <button
+                    disabled={practicing}
+                    onClick={() =>
+                      setProgression((items) =>
+                        items.filter((_, index) => index !== i),
+                      )
+                    }
+                    aria-label={practiceCopy.remove}
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+          {progression.length < 8 && (
+            <button
+              className="add-chord"
+              disabled={practicing}
+              onClick={() => setProgression((items) => [...items, 'C'])}
+            >
+              <Plus size={16} />
+              {practiceCopy.add}
+            </button>
+          )}
+          <div className="practice-status">
+            <div>
+              <span>{practiceCopy.now}</span>
+              <strong>{progression[practiceChordIndex]}</strong>
+              <small>
+                {practiceCopy.beat} {practiceBeat + 1} / 4
+              </small>
+            </div>
+            <div className="beat-dots">
+              {[0, 1, 2, 3].map((i) => (
+                <i
+                  key={i}
+                  className={practicing && practiceBeat === i ? 'active' : ''}
+                />
+              ))}
+            </div>
+            <button
+              className={practicing ? 'stop-practice' : ''}
+              onClick={practicing ? stopSound : startPractice}
+              disabled={soundLoading}
+            >
+              {practicing ? <Square size={18} /> : <Volume2 size={18} />}{' '}
+              {practicing ? practiceCopy.stop : practiceCopy.start}
+            </button>
+          </div>
+          <div className="melody-recorder">
+            <div className="melody-head">
+              <div>
+                <span>{melodyCopy.title}</span>
+                <p>{melodyCopy.intro}</p>
+              </div>
+              <strong>3 {melodyExtras.track}</strong>
+            </div>
+            <div className="melody-master-actions">
+              <button
+                onClick={playAllMelodies}
+                disabled={
+                  !melodyTracks.some((track) => track.url) ||
+                  recordingTrack !== null
+                }
+              >
+                <Volume2 size={15} />
+                {melodyExtras.playAll}
+              </button>
+              <button
+                onClick={pauseAllMelodies}
+                disabled={!melodyTracks.some((track) => track.playing)}
+              >
+                <Square size={15} />
+                {melodyExtras.pauseAll}
+              </button>
+              <button
+                className="erase-melody"
+                onClick={eraseAllMelodies}
+                disabled={
+                  !melodyTracks.some((track) => track.url) ||
+                  recordingTrack !== null
+                }
+              >
+                <Trash2 size={15} />
+                {melodyExtras.eraseAll}
+              </button>
+            </div>
+            <div className="melody-tracks">
+              {melodyTracks.map((track, index) => {
+                const isRecording = recordingTrack === index,
+                  time = isRecording ? recordingTime : track.duration;
+                return (
+                  <article
+                    className={`melody-track ${isRecording ? 'recording' : ''} ${track.playing ? 'playing' : ''}`}
+                    key={index}
+                  >
+                    <div className="melody-track-head">
+                      <span>
+                        {melodyExtras.track} {index + 1}
+                      </span>
+                      <strong>
+                        {isRecording
+                          ? melodyCopy.recording
+                          : track.url
+                            ? melodyCopy.saved
+                            : melodyCopy.ready}
+                      </strong>
+                    </div>
+                    <div className="recording-time">
+                      <i
+                        style={{
+                          width: `${Math.min(100, (time / 30) * 100)}%`,
+                        }}
+                      />
+                      <span>{time.toFixed(1)} / 30.0 s</span>
+                    </div>
+                    <div className="melody-actions">
+                      <button
+                        className="record-button"
+                        disabled={
+                          recordingTrack !== null && recordingTrack !== index
+                        }
+                        onClick={
+                          isRecording
+                            ? stopRecording
+                            : () => startRecording(index)
+                        }
+                      >
+                        {isRecording ? <Square size={15} /> : <Mic size={15} />}{' '}
+                        {isRecording ? melodyCopy.stop : melodyCopy.record}
+                      </button>
+                      <button
+                        onClick={() => toggleMelodyTrack(index)}
+                        disabled={!track.url || recordingTrack !== null}
+                      >
+                        <Volume2 size={15} />
+                        {track.playing ? melodyCopy.pause : melodyCopy.play}
+                      </button>
+                      <button
+                        className="erase-melody"
+                        onClick={() => eraseMelodyTrack(index)}
+                        disabled={!track.url || recordingTrack !== null}
+                      >
+                        <Trash2 size={15} />
+                        {melodyCopy.erase}
+                      </button>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+            <small>{melodyCopy.local}</small>
+            {melodyError && <p className="melody-error">{melodyError}</p>}
+          </div>
+        </div>
+      </section>
+      {recordedDurations.length >= 2 && (
+        <section className="loop-sync">
+          <div>
+            <span>{syncCopy.title}</span>
+            <strong>
+              {syncLength !== null
+                ? `${syncCopy.active} ${syncLength.toFixed(1)} s`
+                : syncCopy.full}
+            </strong>
+          </div>
+          <label>
+            <input
+              type="range"
+              min="0.5"
+              max={Math.max(0.5, shortestRecording)}
+              step="0.1"
+              value={syncLength ?? shortestRecording}
+              disabled={recordingTrack !== null}
+              onChange={(e) => applySyncLength(Number(e.target.value))}
+            />
+            <b>{(syncLength ?? shortestRecording).toFixed(1)} s</b>
+          </label>
+          <div>
+            <button
+              onClick={() => applySyncLength(shortestRecording)}
+              disabled={recordingTrack !== null}
+            >
+              {syncCopy.shortest}
+            </button>
+            <button
+              onClick={useFullMelodyLengths}
+              disabled={syncLength === null}
+            >
+              {syncCopy.full}
+            </button>
+          </div>
+        </section>
+      )}
+      <section className={`listener ${listening ? 'on' : ''}`} id="lyssna">
+        <div className="listen-copy">
+          <p className="eyebrow">
+            <Volume2 size={14} />
+            {copy.recognition}
+          </p>
+          <h2>
+            {copy.hear}
+            <br />
+            {copy.whatPlay}
+          </h2>
+          <p>{copy.micInfo}</p>
+          <button onClick={listening ? stop : start}>
+            {listening ? <Square size={19} /> : <Mic size={20} />}{' '}
+            {listening ? copy.stop : copy.startMic}
+          </button>
+          {error && <p className="error">{error}</p>}
+        </div>
+        <div className="detector" aria-live="polite">
+          <div className="status">
+            <i />
+            <span>{listening ? copy.listening : copy.ready}</span>
+            <small>{listening ? copy.playChord : copy.micOff}</small>
+          </div>
+          <div className="result">
+            <span>{copy.identified}</span>
+            <strong>{detected}</strong>
+            <small>
+              {detected === '—'
+                ? copy.waiting
+                : `${confidence}${copy.confidence}`}
+            </small>
+          </div>
+          <div className="meter">
+            <i style={{ width: `${level}%` }} />
+          </div>
+          <div className="meter-label">
+            <span>{copy.level}</span>
+            <span>{Math.round(level)}%</span>
+          </div>
+          <div className="bars">
+            {[
+              0.5, 0.8, 0.35, 0.95, 0.65, 0.4, 0.75, 0.3, 0.55, 0.88, 0.45, 0.7,
+            ].map((v, i) => (
+              <i
+                key={i}
+                style={{
+                  height: `${Math.max(10, listening ? v * level : 10)}%`,
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+      <section className="tuner" id="stamma">
+        <div className="tuner-copy">
+          <p className="eyebrow">
+            <Volume2 size={14} />
+            {copy.tuneRef}
+          </p>
+          <h2>
+            {copy.listenCompare}
+            <br />
+            <em>{copy.tuneAfter}</em>
+          </h2>
+          <p>{copy.tuneInfo}</p>
+          <label className="tuning-select">
+            {copy.tuning}
+            <select
+              value={tuningId}
+              onChange={(e) => {
+                setTuningId(e.target.value);
+                setSelectedString(0);
+              }}
+            >
+              {['Vanliga', 'Öppna', 'Artist & stil', 'Flersträngat'].map(
+                (group) => (
+                  <optgroup label={group} key={group}>
+                    {tuningPresets
+                      .filter((t) => t.group === group)
+                      .map((t) => (
+                        <option value={t.id} key={t.id}>
+                          {t.name} — {t.hint}
+                        </option>
+                      ))}
+                  </optgroup>
+                ),
+              )}
+            </select>
+          </label>
+          <label className="repeat-tone">
+            <input
+              type="checkbox"
+              checked={repeatTone}
+              onChange={(e) => {
+                setRepeatTone(e.target.checked);
+                if (e.target.checked) playString(selectedString);
+              }}
+            />
+            <span>
+              <b>{copy.repeat}</b>
+              <small>{copy.everyFour}</small>
+            </span>
+          </label>
+          <button
+            onClick={() => playString(selectedString)}
+            disabled={soundLoading}
+          >
+            <Volume2 size={20} />
+            {soundLoading ? copy.loadingGuitar : copy.playAgain}
+          </button>
+        </div>
+        <div className="reference-tuner">
+          <div className="reference-head">
+            <span>{activeTuning.name}</span>
+            <small>{repeatTone ? copy.autoOn : activeTuning.hint}</small>
+          </div>
+          <div className="reference-note">
+            <span>{copy.selectedString}</span>
+            <strong>{midiLabel(activeTuning.midis[selectedString])}</strong>
+            <small>
+              {(
+                440 *
+                Math.pow(2, (activeTuning.midis[selectedString] - 69) / 12)
+              ).toFixed(2)}{' '}
+              Hz
+            </small>
+          </div>
+          <div
+            className="reference-strings"
+            style={{
+              gridTemplateColumns: `repeat(${activeTuning.midis.length},1fr)`,
+            }}
+          >
+            {activeTuning.midis.map((m, i) => (
+              <button
+                key={`${m}-${i}`}
+                className={selectedString === i ? 'selected' : ''}
+                onClick={() => playString(i)}
+                disabled={soundLoading}
+              >
+                <span>{activeTuning.midis.length - i}</span>
+                <strong>{midiLabel(m).replace(/[0-9]/g, '')}</strong>
+                <small>{midiLabel(m)}</small>
+                <Volume2 size={15} />
+              </button>
+            ))}
+          </div>
+          <div className="reference-help">
+            <b>{copy.howTune}</b>
+            <p>{copy.tuneHelp}</p>
+          </div>
+        </div>
+      </section>
+      <footer>
+        <span>
+          <Guitar size={18} />
+          Grepp
+        </span>
+        <p>{copy.built}</p>
+        <a
+          className="support-link"
+          href="https://buymeacoffee.com/niacloneq"
+          target="_blank"
+          rel="noreferrer"
+        >
+          {copy.support}
+        </a>
+      </footer>
+    </main>
+  );
+}
 
