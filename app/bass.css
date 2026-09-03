@@ -1,4 +1,726 @@
-.bass-section{max-width:1280px;margin:0 auto 96px;padding:70px;border-radius:28px;background:#192c26;color:#f8fbf7;box-shadow:0 24px 70px #17251f22}.bass-intro{display:grid;grid-template-columns:1fr 1fr;align-items:end;gap:60px;margin-bottom:42px}.bass-intro .eyebrow{grid-column:1/-1;margin-bottom:-34px;color:#d8ff62}.bass-intro h2{margin:0;font-size:clamp(46px,5vw,74px);line-height:.94;letter-spacing:-.06em}.bass-intro h2 em{font-family:Georgia,serif;font-weight:400;color:#d8ff62}.bass-intro>p:not(.eyebrow){max-width:480px;margin:0;color:#b9c8c0;line-height:1.65}.bass-workspace{display:grid;grid-template-columns:1.35fr .65fr;overflow:hidden;border:1px solid #4a5c53;border-radius:22px;background:#f8f5ed;color:#17251f}.bass-library{padding:30px}.bass-library .section-head h3{margin:0;font-size:25px}.bass-library .section-head>span{color:#6e786f;font:11px var(--mono)}.bass-pattern-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;max-height:460px;overflow:auto;padding-right:5px}.bass-pattern-grid button{display:grid;grid-template-columns:1fr auto;gap:4px;padding:14px;text-align:left;border:1px solid #d9d4c8;border-radius:13px;background:#fffdf8;color:#17251f;cursor:pointer}.bass-pattern-grid button:hover{border-color:#7a8c82}.bass-pattern-grid button.active{background:#d8ff62;border-color:#9db83f}.bass-pattern-grid strong{font-size:20px}.bass-pattern-grid small{align-self:center;color:#6d776f;font-size:9px}.bass-pattern-grid span{grid-column:1/-1;color:#365543;font:9px var(--mono)}.bass-detail{padding:30px;background:#d8ff62;color:#17251f}.bass-detail .kicker{color:#4c604f}.bass-selected{display:flex;align-items:end;justify-content:space-between;padding-bottom:15px;border-bottom:1px solid #93a954}.bass-selected strong{font-size:58px;line-height:.85;letter-spacing:-.06em}.bass-selected span{font-size:11px;color:#516447}.bass-note-row{display:flex;align-items:center;gap:8px;margin:22px 0}.bass-note-row>span{margin-right:auto;color:#52624d;font-size:10px}.bass-note-row b{min-width:32px;height:32px;display:grid;place-items:center;padding:0 7px;border-radius:50%;background:#244c3b;color:white;font:700 10px var(--mono)}.bass-play{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border:0;border-radius:99px;background:#17251f;color:white;font-weight:750;cursor:pointer}.bass-play.secondary{margin-top:10px;background:#365543}.bass-detail>label{display:grid;gap:7px;margin-top:24px;color:#52624d;font-size:10px;font-weight:750;text-transform:uppercase;letter-spacing:.09em}.bass-detail select,.bass-tuner select{width:100%;padding:12px;border:1px solid #9cac63;border-radius:10px;background:#f9ffe4;color:#17251f}.bass-board-panel{margin-top:22px;padding:28px;border:1px solid #4a5c53;border-radius:22px;background:#fffdf8;color:#17251f}.bass-board-panel .fretboard-head{margin-top:0}.bass-fret-wrap{margin-top:16px;overflow-x:auto}.bass-fretboard{min-width:760px;display:grid;grid-template-columns:54px repeat(12,minmax(54px,1fr));grid-template-rows:repeat(4,42px);overflow:hidden;border:1px solid #947e5c;border-radius:10px;background:linear-gradient(90deg,#ead5ae,#c69d68)}.bass-fret-cell{position:relative;display:grid;place-items:center;padding:0;border:0;border-right:2px solid #846f50;border-bottom:1px solid #9f7f58;background:transparent;cursor:default}.bass-fret-cell:nth-child(13n){border-right:0}.bass-fret-cell:nth-last-child(-n+13){border-bottom:0}.bass-fret-cell.open{background:#fffdf8;border-right:5px solid #66563f}.bass-fret-cell:after{content:'';position:absolute;left:0;right:0;top:50%;height:2px;background:#564a3b;box-shadow:0 1px #ffffff66}.bass-fret-cell b{position:relative;z-index:1;width:27px;height:27px;display:grid;place-items:center;border-radius:50%;font-size:9px;box-shadow:0 2px 5px #17251f33;cursor:pointer}.bass-fret-cell b.root{background:#d8ff62;color:#17251f}.bass-fret-cell b.chord{background:#244c3b;color:white}.bass-fret-cell b.scale{background:#e6eee9;color:#294136}.bass-fret-cell b.active-tone{transform:scale(1.25);box-shadow:0 0 0 5px #d8ff6266,0 0 22px 7px #d8ff62}.bass-numbers{padding-bottom:0}.bass-tuner{display:grid;grid-template-columns:.75fr 1.4fr .55fr;align-items:center;gap:28px;margin-top:22px;padding:28px;border:1px solid #4a5c53;border-radius:22px;background:#223c32}.bass-tuner .kicker{color:#d8ff62}.bass-tuner>div:first-child>label:not(.repeat-tone){display:grid;gap:7px;color:#b9c8c0;font-size:10px}.bass-tuner .repeat-tone{margin-top:14px}.bass-tuner .repeat-tone span{color:#f8fbf7}.bass-string-picker{display:grid;gap:7px}.bass-string-picker button{display:grid;gap:2px;place-items:center;padding:12px 4px;border:1px solid #53675d;border-radius:11px;background:#192c26;color:white;cursor:pointer}.bass-string-picker button.selected{border-color:#d8ff62;background:#2f5143;box-shadow:0 0 0 3px #d8ff6225}.bass-string-picker span,.bass-string-picker small{color:#9eb0a6;font-size:9px}.bass-string-picker strong{font-size:20px}.bass-tuner-note{display:grid;place-items:center;text-align:center}.bass-tuner-note span{color:#a9b9b0;font-size:9px;text-transform:uppercase}.bass-tuner-note>strong{margin:5px 0 10px;color:#d8ff62;font-size:44px}.bass-tuner-note button{display:flex;align-items:center;gap:6px;padding:9px 11px;border:1px solid #5b7165;border-radius:99px;background:transparent;color:white;font-size:10px;cursor:pointer}
-@media(max-width:1050px){.topbar nav{gap:18px}.bass-section{margin-inline:18px;padding:44px}.bass-workspace{grid-template-columns:1fr}.bass-pattern-grid{max-height:360px}.bass-tuner{grid-template-columns:1fr 1.5fr}.bass-tuner-note{grid-column:1/-1}}
-@media(max-width:700px){.bass-section{padding:28px 18px;border-radius:20px}.bass-intro{grid-template-columns:1fr;gap:18px}.bass-intro .eyebrow{grid-column:auto;margin-bottom:0}.bass-pattern-grid{grid-template-columns:repeat(2,1fr)}.bass-library,.bass-detail,.bass-board-panel,.bass-tuner{padding:20px}.bass-tuner{grid-template-columns:1fr}.bass-tuner-note{grid-column:auto}.bass-string-picker button{padding-inline:2px}.bass-board-panel .fretboard-head{align-items:flex-start}.bass-fret-wrap{margin-right:-20px}}
+.bass-section {
+  max-width: 1280px;
+  margin: 0 auto 96px;
+  padding: 70px;
+  border-radius: 28px;
+  background: #192c26;
+  color: #f8fbf7;
+  box-shadow: 0 24px 70px #17251f22;
+}
+.bass-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: end;
+  gap: 60px;
+  margin-bottom: 42px;
+}
+.bass-intro .eyebrow {
+  grid-column: 1/-1;
+  margin-bottom: -34px;
+  color: #d8ff62;
+}
+.bass-intro h2 {
+  margin: 0;
+  font-size: clamp(46px, 5vw, 74px);
+  line-height: 0.94;
+  letter-spacing: -0.06em;
+}
+.bass-intro h2 em {
+  font-family: Georgia, serif;
+  font-weight: 400;
+  color: #d8ff62;
+}
+.bass-intro > p:not(.eyebrow) {
+  max-width: 480px;
+  margin: 0;
+  color: #b9c8c0;
+  line-height: 1.65;
+}
+.bass-workspace {
+  display: grid;
+  grid-template-columns: 1.35fr 0.65fr;
+  overflow: hidden;
+  border: 1px solid #4a5c53;
+  border-radius: 22px;
+  background: #f8f5ed;
+  color: #17251f;
+}
+.bass-library {
+  padding: 30px;
+}
+.bass-library .section-head h3 {
+  margin: 0;
+  font-size: 25px;
+}
+.bass-library .section-head > span {
+  color: #6e786f;
+  font: 11px var(--mono);
+}
+.bass-pattern-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+  max-height: 460px;
+  overflow: auto;
+  padding-right: 5px;
+}
+.bass-pattern-grid button {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px;
+  padding: 14px;
+  text-align: left;
+  border: 1px solid #d9d4c8;
+  border-radius: 13px;
+  background: #fffdf8;
+  color: #17251f;
+  cursor: pointer;
+}
+.bass-pattern-grid button:hover {
+  border-color: #7a8c82;
+}
+.bass-pattern-grid button.active {
+  background: #d8ff62;
+  border-color: #9db83f;
+}
+.bass-pattern-grid strong {
+  font-size: 20px;
+}
+.bass-pattern-grid small {
+  align-self: center;
+  color: #6d776f;
+  font-size: 9px;
+}
+.bass-pattern-grid span {
+  grid-column: 1/-1;
+  color: #365543;
+  font: 9px var(--mono);
+}
+.bass-detail {
+  padding: 30px;
+  background: #d8ff62;
+  color: #17251f;
+}
+.bass-detail .kicker {
+  color: #4c604f;
+}
+.bass-selected {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #93a954;
+}
+.bass-selected strong {
+  font-size: 58px;
+  line-height: 0.85;
+  letter-spacing: -0.06em;
+}
+.bass-selected span {
+  font-size: 11px;
+  color: #516447;
+}
+.bass-note-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 22px 0;
+}
+.bass-note-row > span {
+  margin-right: auto;
+  color: #52624d;
+  font-size: 10px;
+}
+.bass-note-row b {
+  min-width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  padding: 0 7px;
+  border-radius: 50%;
+  background: #244c3b;
+  color: white;
+  font: 700 10px var(--mono);
+}
+.bass-play {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px;
+  border: 0;
+  border-radius: 99px;
+  background: #17251f;
+  color: white;
+  font-weight: 750;
+  cursor: pointer;
+}
+.bass-play.secondary {
+  margin-top: 10px;
+  background: #365543;
+}
+.bass-detail > label {
+  display: grid;
+  gap: 7px;
+  margin-top: 24px;
+  color: #52624d;
+  font-size: 10px;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+}
+.bass-detail select,
+.bass-tuner select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #9cac63;
+  border-radius: 10px;
+  background: #f9ffe4;
+  color: #17251f;
+}
+.bass-board-panel {
+  margin-top: 22px;
+  padding: 28px;
+  border: 1px solid #4a5c53;
+  border-radius: 22px;
+  background: #fffdf8;
+  color: #17251f;
+}
+.bass-board-panel .fretboard-head {
+  margin-top: 0;
+}
+.bass-fret-wrap {
+  margin-top: 16px;
+  overflow-x: auto;
+}
+.bass-fretboard {
+  min-width: 760px;
+  display: grid;
+  grid-template-columns: 54px repeat(12, minmax(54px, 1fr));
+  grid-template-rows: repeat(4, 42px);
+  overflow: hidden;
+  border: 1px solid #947e5c;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #ead5ae, #c69d68);
+}
+.bass-fret-cell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-right: 2px solid #846f50;
+  border-bottom: 1px solid #9f7f58;
+  background: transparent;
+  cursor: default;
+}
+.bass-fret-cell:nth-child(13n) {
+  border-right: 0;
+}
+.bass-fret-cell:nth-last-child(-n + 13) {
+  border-bottom: 0;
+}
+.bass-fret-cell.open {
+  background: #fffdf8;
+  border-right: 5px solid #66563f;
+}
+.bass-fret-cell:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  background: #564a3b;
+  box-shadow: 0 1px #ffffff66;
+}
+.bass-fret-cell b {
+  position: relative;
+  z-index: 1;
+  width: 27px;
+  height: 27px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 9px;
+  box-shadow: 0 2px 5px #17251f33;
+  cursor: pointer;
+}
+.bass-fret-cell b.root {
+  background: #d8ff62;
+  color: #17251f;
+}
+.bass-fret-cell b.chord {
+  background: #244c3b;
+  color: white;
+}
+.bass-fret-cell b.scale {
+  background: #e6eee9;
+  color: #294136;
+}
+.bass-fret-cell b.active-tone {
+  transform: scale(1.25);
+  box-shadow:
+    0 0 0 5px #d8ff6266,
+    0 0 22px 7px #d8ff62;
+}
+.bass-numbers {
+  padding-bottom: 0;
+}
+.bass-tuner {
+  display: grid;
+  grid-template-columns: 0.75fr 1.4fr 0.55fr;
+  align-items: center;
+  gap: 28px;
+  margin-top: 22px;
+  padding: 28px;
+  border: 1px solid #4a5c53;
+  border-radius: 22px;
+  background: #223c32;
+}
+.bass-tuner .kicker {
+  color: #d8ff62;
+}
+.bass-tuner > div:first-child > label:not(.repeat-tone) {
+  display: grid;
+  gap: 7px;
+  color: #b9c8c0;
+  font-size: 10px;
+}
+.bass-tuner .repeat-tone {
+  margin-top: 14px;
+}
+.bass-tuner .repeat-tone span {
+  color: #f8fbf7;
+}
+.bass-string-picker {
+  display: grid;
+  gap: 7px;
+}
+.bass-string-picker button {
+  display: grid;
+  gap: 2px;
+  place-items: center;
+  padding: 12px 4px;
+  border: 1px solid #53675d;
+  border-radius: 11px;
+  background: #192c26;
+  color: white;
+  cursor: pointer;
+}
+.bass-string-picker button.selected {
+  border-color: #d8ff62;
+  background: #2f5143;
+  box-shadow: 0 0 0 3px #d8ff6225;
+}
+.bass-string-picker span,
+.bass-string-picker small {
+  color: #9eb0a6;
+  font-size: 9px;
+}
+.bass-string-picker strong {
+  font-size: 20px;
+}
+.bass-tuner-note {
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+.bass-tuner-note span {
+  color: #a9b9b0;
+  font-size: 9px;
+  text-transform: uppercase;
+}
+.bass-tuner-note > strong {
+  margin: 5px 0 10px;
+  color: #d8ff62;
+  font-size: 44px;
+}
+.bass-tuner-note button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 11px;
+  border: 1px solid #5b7165;
+  border-radius: 99px;
+  background: transparent;
+  color: white;
+  font-size: 10px;
+  cursor: pointer;
+}
+@media (max-width: 1050px) {
+  .topbar nav {
+    gap: 18px;
+  }
+  .bass-section {
+    margin-inline: 18px;
+    padding: 44px;
+  }
+  .bass-workspace {
+    grid-template-columns: 1fr;
+  }
+  .bass-pattern-grid {
+    max-height: 360px;
+  }
+  .bass-tuner {
+    grid-template-columns: 1fr 1.5fr;
+  }
+  .bass-tuner-note {
+    grid-column: 1/-1;
+  }
+}
+@media (max-width: 700px) {
+  .bass-section {
+    padding: 28px 18px;
+    border-radius: 20px;
+  }
+  .bass-intro {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .bass-intro .eyebrow {
+    grid-column: auto;
+    margin-bottom: 0;
+  }
+  .bass-pattern-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .bass-library,
+  .bass-detail,
+  .bass-board-panel,
+  .bass-tuner {
+    padding: 20px;
+  }
+  .bass-tuner {
+    grid-template-columns: 1fr;
+  }
+  .bass-tuner-note {
+    grid-column: auto;
+  }
+  .bass-string-picker button {
+    padding-inline: 2px;
+  }
+  .bass-board-panel .fretboard-head {
+    align-items: flex-start;
+  }
+  .bass-fret-wrap {
+    margin-right: -20px;
+  }
+}
+.bass-page {
+  min-height: 100vh;
+  background: #f5f0e6;
+}
+.bass-hero {
+  max-width: 1280px;
+  margin: auto;
+  padding: 70px clamp(22px, 5vw, 76px) 46px;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  align-items: end;
+  gap: 60px;
+}
+.bass-hero h1 {
+  font-size: clamp(54px, 7vw, 96px);
+}
+.bass-hero > p {
+  max-width: 460px;
+  margin: 0;
+  color: #5d665f;
+  font-size: 18px;
+  line-height: 1.65;
+}
+.bass-route-workspace,
+.bass-route-board,
+.bass-route-tuner {
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.bass-route-workspace {
+  border-radius: 28px;
+}
+.bass-route-board {
+  margin-top: 28px;
+}
+.bass-route-tuner {
+  margin-bottom: 90px;
+}
+.bass-board-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 20px;
+}
+.bass-board-head span {
+  color: #718078;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.bass-board-head h2 {
+  margin: 4px 0 0;
+  font-size: 28px;
+}
+.bass-board-head label {
+  display: grid;
+  gap: 6px;
+  color: #718078;
+  font-size: 10px;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.bass-board-head select {
+  padding: 10px 32px 10px 12px;
+  border: 1px solid #c9c4b9;
+  border-radius: 9px;
+  background: #fff;
+  color: #17251f;
+}
+.finger-guide {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin: 22px 0 12px;
+  color: #667169;
+  font-size: 10px;
+}
+.finger-guide span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.finger-guide i {
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #244c3b;
+  color: white;
+  font: 700 10px var(--mono);
+  font-style: normal;
+}
+.fingerboard {
+  display: grid;
+  grid-template-rows: repeat(4, 64px);
+  overflow: hidden;
+  border: 1px solid #947e5c;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #e8d2a8, #c89c64);
+}
+.finger-cell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-right: 2px solid #846f50;
+  border-bottom: 1px solid #99764f;
+  background: transparent;
+}
+.finger-cell:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  background: #4f4437;
+  box-shadow: 0 1px #fff6;
+}
+.finger-cell b {
+  position: relative;
+  z-index: 1;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  place-items: center;
+  padding: 5px;
+  border-radius: 50%;
+  box-shadow: 0 3px 8px #17251f44;
+  cursor: pointer;
+}
+.finger-cell b.root {
+  background: #d8ff62;
+  color: #17251f;
+}
+.finger-cell b.chord {
+  background: #244c3b;
+  color: white;
+}
+.finger-cell b.scale {
+  background: #f0f5f1;
+  color: #294136;
+}
+.finger-cell b strong {
+  font-size: 15px;
+  line-height: 1;
+}
+.finger-cell b small {
+  font-size: 8px;
+  line-height: 1;
+  opacity: 0.75;
+}
+.finger-cell b.active-tone {
+  transform: scale(1.2);
+  box-shadow:
+    0 0 0 5px #d8ff6266,
+    0 0 24px #d8ff62;
+}
+.finger-frets {
+  display: grid;
+  color: #718078;
+  font: 9px var(--mono);
+  text-align: center;
+  padding-top: 8px;
+}
+.finger-note {
+  margin: 20px 0 0;
+  padding: 14px 16px;
+  border-left: 3px solid #d8ff62;
+  background: #f5f7f1;
+  color: #5d685f;
+  font-size: 11px;
+  line-height: 1.55;
+}
+.finger-note b {
+  color: #244c3b;
+}
+.bass-error {
+  color: #8d342b;
+  font-size: 10px;
+}
+.bass-home {
+  white-space: nowrap;
+}
+@media (max-width: 1050px) {
+  .bass-route-workspace,
+  .bass-route-board,
+  .bass-route-tuner {
+    margin-left: 18px;
+    margin-right: 18px;
+  }
+  .bass-page .topbar nav {
+    display: none;
+  }
+}
+@media (max-width: 700px) {
+  .bass-hero {
+    grid-template-columns: 1fr;
+    padding-top: 46px;
+    gap: 22px;
+  }
+  .bass-home {
+    width: 40px;
+    font-size: 0;
+  }
+  .bass-route-workspace {
+    border-radius: 20px;
+  }
+  .bass-board-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .fingerboard {
+    overflow-x: auto;
+    grid-template-columns: repeat(5, 78px) !important;
+    min-width: 390px;
+  }
+  .finger-cell b {
+    width: 38px;
+    height: 38px;
+  }
+  .finger-frets {
+    grid-template-columns: repeat(5, 78px) !important;
+    min-width: 390px;
+  }
+  .bass-route-board {
+    overflow-x: auto;
+  }
+  .bass-route-tuner {
+    margin-bottom: 60px;
+  }
+}
+.guitar-page > .bass-section {
+  display: none;
+}
+.bass-page-mode > .intro,
+.bass-page-mode > .workspace,
+.bass-page-mode > .theory,
+.bass-page-mode > .practice,
+.bass-page-mode > .loop-sync,
+.bass-page-mode > .listener,
+.bass-page-mode > .tuner,
+.bass-page-mode > footer {
+  display: none;
+}
+.bass-page-mode > .bass-section {
+  margin-top: 48px;
+  min-height: calc(100vh - 124px);
+}
+.finger-bass-board {
+  grid-template-columns: repeat(5, minmax(90px, 1fr));
+  grid-template-rows: repeat(4, 58px);
+  min-width: 560px;
+}
+.finger-bass-board .bass-fret-cell:nth-child(13n) {
+  border-right: 2px solid #846f50;
+}
+.finger-bass-board .bass-fret-cell:nth-child(5n) {
+  border-right: 0;
+}
+.finger-bass-board .bass-fret-cell:nth-last-child(-n + 13) {
+  border-bottom: 1px solid #9f7f58;
+}
+.finger-bass-board .bass-fret-cell:nth-last-child(-n + 5) {
+  border-bottom: 0;
+}
+.finger-bass-board .bass-fret-cell b {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  padding: 5px;
+}
+.finger-bass-board .bass-fret-cell b strong {
+  font-size: 14px;
+  line-height: 1;
+}
+.finger-bass-board .bass-fret-cell b small {
+  font-size: 8px;
+  line-height: 1;
+  opacity: 0.75;
+}
+.finger-bass-numbers {
+  grid-template-columns: repeat(5, minmax(90px, 1fr));
+  min-width: 560px;
+}
+.bass-page-mode .finger-note {
+  margin-top: 14px;
+  background: #eef2eb;
+}
+@media (max-width: 620px) {
+  .bass-page-mode > .bass-section {
+    margin-top: 18px;
+  }
+  .bass-page-mode .head-action {
+    width: auto;
+    padding: 0 14px;
+    font-size: 12px;
+  }
+  .finger-bass-board {
+    grid-template-columns: repeat(5, 78px);
+    min-width: 390px;
+  }
+  .finger-bass-numbers {
+    grid-template-columns: repeat(5, 78px);
+    min-width: 390px;
+  }
+}
+.bass-shape{margin:18px 0;padding:14px;border:1px solid #91a553;border-radius:14px;background:#f8ffe2}.bass-shape-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.bass-shape-head b{font-size:11px;text-transform:uppercase;letter-spacing:.08em}.bass-shape-head span{color:#5c6e54;font:9px var(--mono)}.bass-shape-grid{display:grid;gap:3px}.bass-shape-row{display:grid;grid-template-columns:18px repeat(5,1fr);align-items:center;gap:3px}.bass-shape-row>span{color:#516447;font:700 9px var(--mono)}.bass-shape-row button{position:relative;height:30px;padding:0;border:0;border-right:2px solid #8d7959;background:#d8bc8f}.bass-shape-row button:after{content:'';position:absolute;left:0;right:0;top:50%;height:1px;background:#554a3d}.bass-shape-row button:disabled{opacity:1}.bass-shape-row i{position:relative;z-index:1;width:24px;height:24px;margin:auto;display:grid;grid-template-rows:1fr auto;place-items:center;padding:3px;border-radius:50%;background:#244c3b;color:white;font-style:normal;cursor:pointer}.bass-shape-row i.root{background:#17251f;box-shadow:0 0 0 3px #d8ff62}.bass-shape-row strong{font-size:10px;line-height:1}.bass-shape-row small{font-size:6px;line-height:1;opacity:.8}.bass-shape-fingers{display:flex;justify-content:space-between;gap:5px;margin-top:9px;color:#53634f;font-size:8px}.bass-detail>.bass-play{margin-top:4px}
 
