@@ -1125,7 +1125,25 @@ export default function Home() {
   };
   const playBassString = async (index: number) => {
     setBassString(index);
-    await playBassNotes([activeBassTuning.midis[index]]);
+    stop();
+    stopSound();
+    setError('');
+    setSoundLoading(true);
+    try {
+      const ctx = await ensureBass();
+      bass.current?.play(activeBassTuning.midis[index], ctx.currentTime, {
+        duration: 4.08,
+        gain: 0.86,
+        attack: 0.01,
+        decay: 0.12,
+        sustain: 0.72,
+        release: 0.06,
+      });
+    } catch {
+      setError(bassCopy.soundError);
+    } finally {
+      setSoundLoading(false);
+    }
   };
   const startPractice = async () => {
     stop();
